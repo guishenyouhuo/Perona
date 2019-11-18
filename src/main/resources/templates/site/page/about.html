@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>About - Perona</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" th:href="@{/site/images/favicon.png}">
+    <link rel="stylesheet" data-th-href="@{/site/css/style.min.css}"/>
+</head>
+<body>
+<header id="header" class="header bg-white">
+    <div class="navbar-container">
+        <a href="/" class="navbar-logo">
+            <img th:src="@{/site/images/logo.png}" alt="Perona">
+        </a>
+        <div class="navbar-menu">
+            <a href="/archives">Archives</a>
+            <a href="/links">Links</a>
+            <a class="current" href="/about">About</a>
+        </div>
+        <div class="navbar-mobile-menu" onclick="">
+            <span class="icon-menu cross"><span class="middle"></span></span>
+            <ul>
+                <li><a href="/archives">Archives</a></li>
+                <li><a href="/links">Links</a></li>
+                <li><a class="current" href="/about">About</a></li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<article class="main-content page-page">
+    <div class="post-header"><h1 class="post-title" itemprop="name headline"> About </h1>
+        <div class="post-data">
+            <time datetime="2019-10-30T14:07:00+08:00" itemprop="datePublished">Published on Oct 30, 2019</time>
+        </div>
+    </div>
+    <div id="post-content" class="post-content"><h3>Hello</h3>
+        <p>我是 Perona ，海贼王幽灵公主</p>
+        <p>幽灵果实拥有者</p>
+        <p>莫利亚海贼团。</p>
+        <P>幽灵分身；消极幽灵；迷你幽灵·幽灵炸弹；特大幽灵·神风炸弹</P>
+        <h3>关于我</h3>
+        <p>幽灵公主</p>
+        <p>罗罗亚索隆^^CP...</p>
+        <p>动物僵尸与吓人僵尸的指挥官···</p>
+        <ul>
+            <li><p><a href="https://www.cnblogs.com/guishenyouhuo/" target="_blank">Blog</a></p></li>
+            <li><p><a href="https://github.com/guishenyouhuo" target="_blank">Github</a></p></li>
+            <li><p><a href="https://www.zhihu.com/" target="_blank">zhihu</a></p></li>
+        </ul>
+    </div>
+</article>
+
+<div id="respond-post-334" class="comment-container">
+    <div id="comments" class="clearfix">
+        <span class="response">Responses <a id="cancel-comment-reply-link" style="display:none; cursor: pointer;"
+               onclick="return cancelReply();"> / Cancel Reply</a>
+        </span>
+        <form method="post" action="#" id="comment-form" class="comment-form" role="form">
+            <input name="sort" value="2" style="display: none;">
+            <input name="pid" id="pId" value="" style="display: none;">
+            <input name="cname" id="cName" value="" style="display: none;">
+            <input type="text" name="name" maxlength="12" id="author" class="form-control input-control clearfix" placeholder="Name (*)" value="" required="">
+            <input type="email" name="email" id="mail" class="form-control input-control clearfix" placeholder="Email (*)" value="" required="">
+            <input type="url" name="url" id="url" class="form-control input-control clearfix" placeholder="Site (http://)" value="">
+            <textarea name="content" id="textarea" class="form-control" placeholder="Your comment here. Be cool. " required=""></textarea>
+            <button type="submit" class="submit" id="submit">SUBMIT</button>
+        </form>
+        <ol class="comment-list">
+            <li th:each="parent : ${comments.rows}" th:id="'li-comment-' + ${parent.id}" class="comment-body comment-parent comment-even">
+                <div th:id="'comment-' + ${parent.id}">
+                    <div class="comment-view" onclick="">
+                        <div class="comment-header">
+                            <img class="avatar" th:src="@{/site/images/user.png}" width="80" height="80">
+                            <span class="comment-author">
+                                <a th:href="${parent.url}" target="_blank" rel="external nofollow">[[${parent.name}]]</a>
+                                <span>[[${parent.device}]]</span>
+                            </span>
+                        </div>
+                        <div class="comment-content">
+                            <span class="comment-author-at"></span>
+                            <p>[[${parent.content}]]</p>
+                            <p></p>
+                        </div>
+                        <div class="comment-meta">
+                            <time class="comment-time">[[${parent.time}]]</time>
+                            <span class="comment-reply">
+                                 <a href="#comments" rel="nofollow" th:onclick="reply([[${parent.id}]], [[${parent.name}]]);">Reply</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="!${#lists.isEmpty(parent.children)}" class="comment-children">
+                    <ol class="comment-list">
+                        <li th:each="child : ${parent.children}" th:id="'li-comment-' + ${child.id}" class="comment-body comment-child comment-level-odd comment-odd">
+                            <div th:id="'comment-' + ${child.id}">
+                                <div class="comment-view" onclick="">
+                                    <div class="comment-header">
+                                        <img class="avatar" th:src="@{/site/images/user.png}" width="80" height="80">
+                                        <span class="comment-author">
+                                            <a th:href="${child.url}" target="_blank" rel="external nofollow">[[${child.name}]]</a>
+                                            <span>[[${child.device}]]</span>
+                                        </span>
+                                    </div>
+                                    <div class="comment-content">
+                                        <span class="comment-author-at"><a th:href="'#comment-' + ${child.pId}">@[[${child.target}]]</a></span>
+                                        <p>[[${child.content}]]</p>
+                                        <p></p>
+                                    </div>
+                                    <div class="comment-meta">
+                                        <time class="comment-time">[[${child.time}]]</time>
+                                        <span class="comment-reply">
+                                            <a href="#comments" rel="nofollow" th:onclick="reply([[${parent.id}]], [[${child.name}]]);">Reply</a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </li>
+        </ol>
+        <div th:if="${comments.pages} > 0" class="lists-navigator clearfix">
+            <ol class="page-navigator">
+                <li th:if="${comments.current} > 1" class="prev">
+                    <a th:href="'/links?page=' + (${comments.current} - 1) + '#comments'">←</a>
+                </li>
+                <li th:each="i : ${#numbers.sequence(1, comments.pages)}" th:class="${comments.current} == ${i} ? 'current' : ''">
+                    <a th:href="'/links?page=' + ${i} + '#comments'">[[${i}]]</a>
+                </li>
+                <li th:if="${comments.current} < ${comments.pages}" class="next">
+                    <a th:href="'/links?page=' + (${comments.current} + 1) + '#comments'">→</a>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div th:replace="site/layout/footer"></div>
+<script th:src="@{/admin/lib/editormd/jquery.min.js}"></script>
+<script th:src="@{/site/js/comment.js}"></script>
+</body>
+</html>

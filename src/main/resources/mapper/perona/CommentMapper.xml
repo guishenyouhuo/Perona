@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.guigui.perona.mapper.CommentMapper">
+    <!-- 查询最新的8条评论，为博客前台服务 -->
+    <select id="findAll" resultType="Comment">
+        SELECT DISTINCT
+            c.content,
+            c.name,
+            c.article_id
+        FROM
+            article a,
+            comment c
+        WHERE
+            c.article_id IN ( SELECT id FROM article )
+            AND a.state = #{state}
+            LIMIT #{queryPage.page}, #{queryPage.limit}
+    </select>
+</mapper>

@@ -1,0 +1,141 @@
+<link rel="stylesheet" data-th-href="@{/admin/lib/editormd/css/editormd.css}" media="all">
+<link rel="stylesheet" data-th-href="@{/admin/lib/formSelect/formSelect.css}" media="all">
+<link rel="stylesheet" data-th-href="@{/site/css/editorCodeStyle.css}" media="all">
+<div class="layui-fluid" lay-title="文章撰写">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card layui-form" lay-filter="component-form-element">
+                <div class="layui-card-header">文章撰写</div>
+                <div class="layui-card-body layui-row layui-col-space10">
+                    <form class="layui-form">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">文章标题</label>
+                            <div class="layui-input-block" style="width: 75%">
+                                <input type="text" name="title" required lay-verify="required" placeholder="请输入标题"
+                                       autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-inline" style="width: 30%;">
+                                <label class="layui-form-label">文章分类</label>
+                                <div class="layui-input-inline" style="width: 55%;">
+                                    <select name="category" id="categorys" lay-verify="required">
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline" style="width: 60%">
+                                <label class="layui-form-label">文章标签</label>
+                                <div class="layui-input-inline" style="width: 70%;">
+                                    <select name="artTags" id="artTags" lay-verify="required" xm-select="artTags">
+                                        <option value="">请选择</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">文章内容</label>
+                            <div class="layui-input-block">
+                                <div id="content-md">
+                                    <textarea name="content" style="display:none;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button type="button" class="layui-btn layui-btn-warm" lay-submit lay-filter="draft">
+                                    存入草稿
+                                </button>
+                                <button type="button" class="layui-btn" lay-submit lay-filter="release">发布文章</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script data-th-src="@{/admin/lib/editormd/jquery.min.js}"></script>
+<script data-th-src="@{/admin/lib/editormd/editormd.min.js}"></script>
+<script data-th-src="@{/admin/lib/formSelect/formSelect.min.js}"></script>
+<script data-th-inline="none" type="text/javascript">
+    layui.use(['admin', 'element', 'form'], function (admin, element, form) {
+        var contentMd;
+        $(function () {
+            contentMd = editormd("content-md", {
+                width: "100%",
+                height: 640,
+                syncScrolling: "single",
+                saveHTMLToTextarea: true,
+                htmlDecode: "style,script,iframe",
+                path: "/admin/lib/editormd/lib/",
+                imageUpload : true,
+                imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                imageUploadURL : "/uploadfile/imgUpload",
+                theme : "dark",
+                previewTheme : "dark",
+                editorTheme : "pastel-on-dark",
+            });
+        });
+
+        //渲染tag Select列表
+        var formSelects = layui.formSelects;
+        formSelects.config('artTags', {
+            keyName: 'name',
+            keyVal: 'id',
+            beforeSuccess: function (id, url, searchVal, result) {
+                return result.data;
+            }
+        }).data('artTags', 'server', {
+            url: api.tag.allList
+        });
+
+        //渲染Select列表
+        admin.get(api.category.allList, {}, (res) => {
+            let list = res.data;
+            let select = document.getElementById('categorys');
+            if (list != null || list.size() > 0) {
+                list.forEach(c => {
+                    let option = document.createElement("option");
+                    option.setAttribute("value", c.id);
+                    option.innerText = c.name;
+                    select.appendChild(option)
+                })
+            }
+            form.render('select')
+        });
+
+        //监听提交
+        form.on('submit(draft)', function (form) {
+            let data = form.field;
+            data.content = contentMd.getHTML();
+            data.contentMd = contentMd.getMarkdown();
+            data.state = "0";
+            data.artTags = layui.formSelects.value('artTags');
+            admin.post(api.article.base, JSON.stringify(data), (res) => {
+                layer.msg(res.msg);
+                admin.navigate(page.article.list);
+                layui.table.reload('article-table', {
+                    page: {curr: 1}
+                });
+            });
+            return false;
+        });
+        form.on('submit(release)', function (form) {
+            let data = form.field;
+            data.content = contentMd.getHTML();
+            data.contentMd = contentMd.getMarkdown();
+            data.artTags = layui.formSelects.value('artTags');
+            data.state = "1";
+            admin.post(api.article.base, JSON.stringify(data), (res) => {
+                layer.msg(res.msg);
+                admin.navigate(page.article.list);
+                layui.table.reload('article-table', {
+                    page: {curr: 1}
+                });
+            });
+            return false;
+        });
+    });
+</script>
