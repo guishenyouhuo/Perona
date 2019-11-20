@@ -77,7 +77,7 @@
                     <div class="layui-col-md6 layui-col-sm12 layui-col-xs12">
                         <div class="layui-row welcome-info-wrapper">
                             <div class="user-header">
-                                <img alt="头像" id="user-avatar" src="">
+                                <img alt="头像" id="user-avatar" src="/admin/page/images/avatar/perona.jpg">
                             </div>
                             <div class="user-info">
                                 <div class="layui-row">
@@ -317,7 +317,7 @@
                     .find('#comment-count').text(data.commentCount).end()
                     .find('#last-login-time').text(data.lastLoginTime ? data.lastLoginTime : '第一次访问系统').end()
                     .find('#welcome-message').html(welcomeMessage).end()
-                    .find('#user-avatar').attr('src', data.user.avatar);
+                    .find('#user-avatar').attr('src', "/admin/page/images/avatar/perona.jpg");
             }
         }
     )
