@@ -68,7 +68,7 @@ public class ShiroConfig {
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
         hashedCredentialsMatcher.setHashAlgorithmName("MD5");
-        hashedCredentialsMatcher.setHashIterations(2);
+        hashedCredentialsMatcher.setHashIterations(23);
         return hashedCredentialsMatcher;
     }
 
