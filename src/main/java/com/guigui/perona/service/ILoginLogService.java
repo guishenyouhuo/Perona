@@ -1,5 +1,7 @@
 package com.guigui.perona.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.guigui.perona.common.utils.QueryPage;
 import com.guigui.perona.entity.LoginLog;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -14,5 +16,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface ILoginLogService extends IService<LoginLog> {
 
     void saveLog(LoginLog log);
+
+    IPage<LoginLog> list(LoginLog log, QueryPage queryPage);
+
+    void delete(Long id);
 
 }

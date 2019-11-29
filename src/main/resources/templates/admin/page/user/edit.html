@@ -53,14 +53,14 @@
                 data.field.password = null
             }
             if (data.field.username == "") {
-                layer.msg('请填写用户名')
+                layer.msg('请填写用户名');
                 return false;
             }
             console.log(data.field)
             admin.put(api.user.base, JSON.stringify(data.field), (res) => {
-                layer.closeAll()
+                layer.closeAll();
                 admin.logout()
-            })
+            });
             return false;
         });
     });

@@ -31,6 +31,7 @@ import java.util.Map;
  */
 @Configuration
 public class ShiroConfig {
+
     @Autowired
     private PeronaProperties properties;
 
@@ -67,8 +68,9 @@ public class ShiroConfig {
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
-        hashedCredentialsMatcher.setHashAlgorithmName("MD5");
-        hashedCredentialsMatcher.setHashIterations(23);
+        ShiroProperties shiro = properties.getShiro();
+        hashedCredentialsMatcher.setHashAlgorithmName(shiro.getHashAlgorithm());
+        hashedCredentialsMatcher.setHashIterations(shiro.getHashTimes());
         return hashedCredentialsMatcher;
     }
 

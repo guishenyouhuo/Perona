@@ -59,7 +59,7 @@
                     <div id="user-profile">
                         <script type="text/html" template>
                             <div id="user-img">
-                                <img alt="头像" title="点我更换头像" src="{{ layui.admin.data()['user'].avatar  }}">
+                                <img alt="头像" title="点我更换头像" src="/admin/page/images/avatar/perona.jpg">
                                 <div id="options-wrapper">
                                     <div id="update-user-info">
                                         <a>
@@ -115,12 +115,12 @@
             });
         });
 
-        $view.on('click', '#user-profile img', function () {
-            admin.modal.view('点击更换', page.user.avatar, {
-                area: $(window).width() <= 750 ? '90%' : '650px',
-                offset: '100px'
-            });
-        });
+        // $view.on('click', '#user-profile img', function () {
+        //     admin.modal.view('点击更换', page.user.avatar, {
+        //         area: $(window).width() <= 750 ? '90%' : '650px',
+        //         offset: '100px'
+        //     });
+        // });
 
         table.render({
             elem: '#log-table',

@@ -1,17 +1,19 @@
 package com.guigui.perona.controller;
 
 
+import com.guigui.perona.common.annotation.Log;
+import com.guigui.perona.common.exception.GlobalException;
 import com.guigui.perona.common.utils.Return;
 import com.guigui.perona.entity.LoginLog;
+import com.guigui.perona.entity.UserInfo;
 import com.guigui.perona.service.IArticleService;
 import com.guigui.perona.service.ICommentService;
 import com.guigui.perona.service.ILoginLogService;
+import com.guigui.perona.service.IUserInfoService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
 import com.guigui.perona.common.BaseController;
 
 import java.util.HashMap;
@@ -40,6 +42,9 @@ public class UserInfoController extends BaseController {
     @Autowired
     private ILoginLogService loginLogService;
 
+    @Autowired
+    private IUserInfoService userInfoService;
+
     @GetMapping("/info")
     public Return getInfo() {
         Map<String, Object> map = new HashMap<>();
@@ -55,6 +60,46 @@ public class UserInfoController extends BaseController {
         map.put("token", this.getSession().getId());
         map.put("user", this.getCurrentUser());
         return new Return<>(map);
+    }
+
+    @GetMapping("/{id}")
+    public Return findById(@PathVariable Long id) {
+        return new Return<>(userInfoService.getById(id));
+    }
+
+    @PostMapping
+    @Log("新增用户")
+    public Return save(@RequestBody UserInfo userInfo) {
+        try {
+            userInfoService.add(userInfo);
+            return new Return();
+        } catch (Exception e) {
+            throw new GlobalException(e.getMessage());
+        }
+    }
+
+    @PutMapping
+    @Log("更新用户")
+    public Return update(@RequestBody UserInfo userInfo) {
+        try {
+            userInfo.setId(this.getCurrentUser().getId());
+            userInfoService.update(userInfo);
+            return new Return();
+        } catch (Exception e) {
+            throw new GlobalException(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @Log("删除用户")
+    public Return delete(@PathVariable Long id) {
+        try {
+            userInfoService.delete(id);
+            return new Return();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new GlobalException(e.getMessage());
+        }
     }
 
 }

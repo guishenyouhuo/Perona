@@ -20,4 +20,25 @@ public interface IUserInfoService extends IService<UserInfo> {
      * @return
      */
     UserInfo findByName(String username);
+
+    /**
+     * 新增
+     *
+     * @param userInfo
+     */
+    void add(UserInfo userInfo);
+
+    /**
+     * 更新
+     *
+     * @param userInfo
+     */
+    void update(UserInfo userInfo);
+
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    void delete(Long id);
 }

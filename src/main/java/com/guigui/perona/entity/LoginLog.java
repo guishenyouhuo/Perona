@@ -60,5 +60,7 @@ public class LoginLog implements Serializable {
     @TableField("device")
     private String device;
 
+    @TableField(exist = false)
+    private String filedTime;
 
 }
