@@ -35,7 +35,7 @@ public class AdminRouterController {
 
     @GetMapping("/login")
     public String login() {
-        return "admin/page/login";
+        return "manage/login";
     }
 
     @GetMapping("/admin/page/layout")
@@ -58,13 +58,13 @@ public class AdminRouterController {
         return "admin/page/article/form";
     }
 
-    @RequestMapping("/admin/page/article/edit/{id}")
-    public String articleEdit(Model model, @PathVariable String id) {
-        Article article = articleService.getById(id);
-        article.setArtTags(tagService.findByArticleId(article.getId()));
-        model.addAttribute("p", article);
-        return "admin/page/article/edit";
-    }
+//    @RequestMapping("/admin/page/article/edit/{id}")
+//    public String articleEdit(Model model, @PathVariable String id) {
+//        Article article = articleService.getById(id);
+//        article.setArtTags(tagService.findByArticleId(article.getId()));
+//        model.addAttribute("p", article);
+//        return "admin/page/article/edit";
+//    }
 
     @RequestMapping("/admin/page/tag")
     public String tag() {

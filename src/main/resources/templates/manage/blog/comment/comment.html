@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="manage/include :: header('评论列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="article-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                昵称：<input type="text" name="name"/>
+                            </li>
+                            <li>
+                                网址：<input type="text" name="url"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="manage:comment:remove">
+                    <i class="fa fa-remove"></i> 批量删除
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="manage/include :: footer" />
+    <script th:inline="javascript">
+        var removeFlag = [[${@permission.hasPermi('manage:comment:remove')}]];
+        var prefix = ctx + "manage/comment";
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                removeUrl: prefix + "/remove",
+                sortName: "id",
+                sortOrder: "desc",
+                striped: true,
+                showPageGo: true,
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : '编号'
+                },
+                {
+                    field : 'name',
+                    title : '留言人'
+                },
+                {
+                    field : 'content',
+                    title : '留言内容',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 10, 'open');
+                    }
+                },
+                {
+                    field : 'email',
+                    title : '邮箱'
+                },
+                {
+                    field : 'url',
+                    title : '网址',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 20, 'open');
+                    }
+                },
+                {
+                    field : 'ip',
+                    title : 'IP地址'
+                },
+                {
+                    field : 'device',
+                    title : '登录设备'
+                },
+                {
+                    field : 'address',
+                    title : '地址',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 10, 'open');
+                    }
+                },
+                {
+                    field : 'sort',
+                    title : '页面',
+                    formatter: function (value, row, index) {
+                        if (value == "0") {
+                            return '<div><span class="badge badge-primary">Article</span></div>'
+                        } else if (value == '1') {
+                            return '<div><span class="badge badge-warning">Links</span></div>'
+                        } else if (value == '2') {
+                            return '<div><span class="badge badge-info">About Me</span></div>'
+                        }
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

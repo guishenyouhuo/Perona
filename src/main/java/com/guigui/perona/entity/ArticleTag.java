@@ -1,25 +1,20 @@
 package com.guigui.perona.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
 /**
- * <p>
- * 文章&&标签关联表
- * </p>
+ * 文章&&标签关联对象 article_tag
  *
  * @author guigui
- * @since 2019-10-24
+ * @date 2020-03-26
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class ArticleTag implements Serializable {
 
@@ -28,23 +23,24 @@ public class ArticleTag implements Serializable {
     /**
      * 编号
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
      * 文章ID
      */
-    @TableField("article_id")
     private Long articleId;
 
     /**
      * 标签ID
      */
-    @TableField("tag_id")
     private Long tagId;
 
-    public ArticleTag(Long articleId, Long tagId) {
-        this.articleId = articleId;
-        this.tagId = tagId;
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("articleId", getArticleId())
+                .append("tagId", getTagId())
+                .toString();
     }
 }

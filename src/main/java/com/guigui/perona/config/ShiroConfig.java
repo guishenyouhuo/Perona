@@ -1,8 +1,10 @@
 package com.guigui.perona.config;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.guigui.perona.common.properties.PeronaProperties;
 import com.guigui.perona.common.properties.ShiroProperties;
 import com.guigui.perona.common.realm.AuthRealm;
+import com.guigui.perona.manage.web.filter.CaptchaValidateFilter;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -113,11 +116,45 @@ public class ShiroConfig {
         Map<String, String> filterChain = new LinkedHashMap<>();
         String[] urls = shiro.getAnonUrl().split(",");
         for (String url : urls) {
-            filterChain.put(url, "anon");
+            filterChain.put(url.trim(), "anon");
         }
-        filterChain.put("/**", "user");
+//        filterChain.put("/**", "user");
 //        filterChain.put("/**", "anon");
+
+        // 不需要拦截的访问
+//        filterChain.put("/login", "anon,captchaValidate");
+//        filterChain.put("/login", "anon,captchaValidate");
+
+        filterChain.put("/manage/login", "anon,captchaValidate");
+
+        Map<String, Filter> filterList = new LinkedHashMap<>();
+        filterList.put("captchaValidate", captchaValidateFilter());
+        filter.setFilters(filterList);
+
+        // 所有请求需要认证
+        filterChain.put("/**", "user");
         filter.setFilterChainDefinitionMap(filterChain);
+
         return filter;
+    }
+
+    /**
+     * 自定义验证码过滤器
+     */
+    @Bean
+    public CaptchaValidateFilter captchaValidateFilter() {
+        ShiroProperties shiro = properties.getShiro();
+        CaptchaValidateFilter captchaValidateFilter = new CaptchaValidateFilter();
+        captchaValidateFilter.setCaptchaEnabled(shiro.isCaptchaEnabled());
+        captchaValidateFilter.setCaptchaType(shiro.getCaptchaType());
+        return captchaValidateFilter;
+    }
+
+    /**
+     * thymeleaf模板引擎和shiro框架的整合
+     */
+    @Bean
+    public ShiroDialect shiroDialect() {
+        return new ShiroDialect();
     }
 }

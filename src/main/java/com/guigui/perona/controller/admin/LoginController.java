@@ -2,9 +2,9 @@ package com.guigui.perona.controller.admin;
 
 import com.guigui.perona.common.BaseController;
 import com.guigui.perona.common.constants.CommonConstants;
-import com.guigui.perona.common.utils.AddressUtil;
+//import com.guigui.perona.common.utils.AddressUtil;
 import com.guigui.perona.common.utils.HttpContextUtil;
-import com.guigui.perona.common.utils.IPUtil;
+//import com.guigui.perona.common.utils.IPUtil;
 import com.guigui.perona.common.utils.Return;
 import com.guigui.perona.entity.LoginLog;
 import com.guigui.perona.service.ILoginLogService;
@@ -46,38 +46,38 @@ public class LoginController extends BaseController {
      * @param password
      * @return
      */
-    @PostMapping("/login")
-    public Return login(@RequestParam(value = "username", required = false) String username,
-                        @RequestParam(value = "password", required = false) String password) {
-        Subject subject = getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-        try {
-            subject.login(token);
-
-            //记录登录日志
-            LoginLog log = new LoginLog();
-            //获取HTTP请求
-            HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
-            String ip = IPUtil.getIpAddr(request);
-            log.setIp(ip);
-            log.setUsername(super.getCurrentUser().getUsername());
-            log.setLocation(AddressUtil.getAddress(ip));
-            log.setCreateTime(LocalDateTime.now());
-            String header = request.getHeader(CommonConstants.USER_AGENT);
-            UserAgent userAgent = UserAgent.parseUserAgentString(header);
-            Browser browser = userAgent.getBrowser();
-            OperatingSystem operatingSystem = userAgent.getOperatingSystem();
-            log.setDevice(browser.getName() + " -- " + operatingSystem.getName());
-            loginLogService.saveLog(log);
-            Map<String, Object> map = new HashMap<>();
-            map.put("token", subject.getSession().getId());
-            map.put("user", this.getCurrentUser());
-            return new Return<>(map);
-        } catch (Exception e) {
-            log.error("登录出现异常！username: {}", username, e);
-            return new Return<>(e);
-        }
-    }
+//    @PostMapping("/login")
+//    public Return login(@RequestParam(value = "username", required = false) String username,
+//                        @RequestParam(value = "password", required = false) String password) {
+//        Subject subject = getSubject();
+//        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+//        try {
+//            subject.login(token);
+//
+//            //记录登录日志
+//            LoginLog log = new LoginLog();
+//            //获取HTTP请求
+//            HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
+//            String ip = IPUtil.getIpAddr(request);
+//            log.setIp(ip);
+//            log.setUsername(super.getCurrentUser().getUsername());
+//            log.setLocation(AddressUtil.getAddress(ip));
+//            log.setCreateTime(LocalDateTime.now());
+//            String header = request.getHeader(CommonConstants.USER_AGENT);
+//            UserAgent userAgent = UserAgent.parseUserAgentString(header);
+//            Browser browser = userAgent.getBrowser();
+//            OperatingSystem operatingSystem = userAgent.getOperatingSystem();
+//            log.setDevice(browser.getName() + " -- " + operatingSystem.getName());
+//            loginLogService.saveLog(log);
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("token", subject.getSession().getId());
+//            map.put("user", this.getCurrentUser());
+//            return new Return<>(map);
+//        } catch (Exception e) {
+//            log.error("登录出现异常！username: {}", username, e);
+//            return new Return<>(e);
+//        }
+//    }
 
     /**
      * 注销接口

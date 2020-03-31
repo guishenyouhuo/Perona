@@ -1,13 +1,11 @@
 package com.guigui.perona.controller.router;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.guigui.perona.common.BaseController;
 import com.guigui.perona.common.constants.CommonConstants;
 import com.guigui.perona.common.constants.SiteConstants;
 import com.guigui.perona.common.dto.ArchivesWithArticle;
-import com.guigui.perona.common.utils.QueryPage;
 import com.guigui.perona.entity.Article;
 import com.guigui.perona.entity.Category;
 import com.guigui.perona.entity.Comment;
@@ -52,29 +50,25 @@ public class SiteRouterController extends BaseController {
     private IFriendLinkService friendLinkService;
 
     @GetMapping("/error/500")
-    public String error() {
+    public String errorRet() {
         return "error/500";
     }
 
     private void init(Model model) {
-        //封装最新的8条文章数据
-        List<Article> articleList = articleService.findAll();
-        articleList.forEach(a -> {
-            a.setContent(null);
-            a.setContentMd(null);
-        });
+        //封装最新的8条文章数据 TODO 最近条数可配置
+        List<Article> articleList = articleService.selectRecentArticles(8);
         model.addAttribute(SiteConstants.RECENT_POSTS, articleList);
 
-        //封装最新的8条评论数据
-        List<Comment> commentList = commentService.findAll();
+        //封装最新的8条评论数据 TODO 最近条数可配置
+        List<Comment> commentList = commentService.selectRecentComments(CommonConstants.DEFAULT_RELEASE_STATUS, 8);
         model.addAttribute(SiteConstants.RECENT_COMMENTS, commentList);
     }
 
     @RequestMapping({"", "/", "/page/{p}"})
     public String index(@PathVariable(required = false) String p, Model model) {
         try {
-            IPage<Article> list = articlesCommon(p, null);
-            list.getRecords().forEach(a -> {
+            PageInfo<Article> list = articlesCommon(p, null);
+            list.getList().forEach(a -> {
                 String content = Jsoup.parse(a.getContent()).text();
                 if (content.length() > 50) {
                     content = content.substring(0, 40) + "...";
@@ -82,15 +76,16 @@ public class SiteRouterController extends BaseController {
                 a.setContent(content);
                 a.setContentMd(null);
 
+                // TODO 可优化
                 if (StringUtils.isNotBlank(a.getCategory())) {
-                    Category category = categoryService.getById(a.getCategory());
+                    Category category = categoryService.selectCategoryById(Long.valueOf(a.getCategory()));
                     if (category != null) {
                         a.setCategoryName(category.getName());
                     }
                 }
             });
             Map<String, Object> data = super.getData(list);
-            data.put("current", list.getCurrent());
+            data.put("current", list.getPageNum());
             data.put("pages", list.getPages());
             model.addAttribute(SiteConstants.INDEX_MODEL, data);
 
@@ -107,10 +102,10 @@ public class SiteRouterController extends BaseController {
     public String categoryArticles(@PathVariable String c, @PathVariable(required = false) String p, Model model) {
         String categoryName = "";
         try {
-            IPage<Article> list = articlesCommon(p, c);
-            Category category = categoryService.getById(c);
+            PageInfo<Article> list = articlesCommon(p, c);
+            Category category = categoryService.selectCategoryById(Long.valueOf(c));
             categoryName = category.getName();
-            list.getRecords().forEach(a -> {
+            list.getList().forEach(a -> {
                 String content = Jsoup.parse(a.getContent()).text();
                 if (content.length() > 50) {
                     content = content.substring(0, 40) + "...";
@@ -120,7 +115,7 @@ public class SiteRouterController extends BaseController {
                 a.setCategoryName(category.getName());
             });
             Map<String, Object> data = super.getData(list);
-            data.put("current", list.getCurrent());
+            data.put("current", list.getPageNum());
             data.put("pages", list.getPages());
             data.put("category", categoryName);
             data.put("categoryId", c);
@@ -141,9 +136,8 @@ public class SiteRouterController extends BaseController {
             if (page == null || page.equals("")) {
                 page = "1";
             }
-            QueryPage queryPage = new QueryPage(Integer.parseInt(page), SiteConstants.COMMENT_PAGE_LIMIT);
             //封装评论数据
-            Map<String, Object> map = commentService.findCommentsList(queryPage, null, SiteConstants.COMMENT_SORT_ABOUT);
+            Map<String, Object> map = commentService.getCommentsBySort(Integer.parseInt(page), SiteConstants.COMMENT_SORT_ABOUT, null);
             model.addAttribute(SiteConstants.COMMENTS_MODEL, map);
 
             //初始化
@@ -166,12 +160,11 @@ public class SiteRouterController extends BaseController {
             if (page == null || page.equals("")) {
                 page = "1";
             }
-            QueryPage queryPage = new QueryPage(Integer.parseInt(page), SiteConstants.COMMENT_PAGE_LIMIT);
-            List<FriendLink> list = friendLinkService.list();
+            List<FriendLink> list = friendLinkService.selectFriendLinkList(new FriendLink());
             model.addAttribute(SiteConstants.LINKS_MODEL, list);
 
             //封装评论数据
-            Map<String, Object> map = commentService.findCommentsList(queryPage, null, SiteConstants.COMMENT_SORT_LINKS);
+            Map<String, Object> map = commentService.getCommentsBySort(Integer.parseInt(page), SiteConstants.COMMENT_SORT_LINKS, null);
             model.addAttribute(SiteConstants.COMMENTS_MODEL, map);
 
             //初始化
@@ -212,22 +205,21 @@ public class SiteRouterController extends BaseController {
     @RequestMapping("/article/{id}")
     public String article(@PathVariable String id, @RequestParam(name = "page", required = false) String page, Model model) {
         if (id == null) {
-            return this.error();
+            return this.errorRet();
         }
         try {
             if (page == null || page.equals("")) {
                 page = "1";
             }
-            QueryPage queryPage = new QueryPage(Integer.parseInt(page), SiteConstants.COMMENT_PAGE_LIMIT);
             if (StringUtils.isNotBlank(id)) {
-                Article article = articleService.findById(Long.valueOf(id));
+                Article article = articleService.selectArticleById(Long.valueOf(id));
                 if (article == null || article.getState().equals(CommonConstants.DEFAULT_DRAFT_STATUS)) {
                     return "redirect:/error/500";
                 }
                 model.addAttribute(SiteConstants.ARTICLE_MODEL, article);
 
                 //封装该文章的评论数据
-                Map<String, Object> map = commentService.findCommentsList(queryPage, id, SiteConstants.COMMENT_SORT_ARTICLE);
+                Map<String, Object> map = commentService.getCommentsBySort(Integer.parseInt(page), SiteConstants.COMMENT_SORT_ARTICLE, id);
                 model.addAttribute(SiteConstants.COMMENTS_MODEL, map);
             }
 
@@ -240,17 +232,17 @@ public class SiteRouterController extends BaseController {
         return "site/page/article";
     }
 
-    private IPage<Article> articlesCommon(String p, String c) {
+    private PageInfo<Article> articlesCommon(String p, String c) {
         if (StringUtils.isBlank(p)) {
             p = "1";
         }
-        IPage<Article> page = new Page<>(Integer.parseInt(p), SiteConstants.DEFAULT_PAGE_LIMIT);
-        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByDesc(Article::getId);
-        queryWrapper.eq(Article::getState, CommonConstants.DEFAULT_RELEASE_STATUS);
+        Article article = new Article();
+        article.setState(CommonConstants.DEFAULT_RELEASE_STATUS);
         if (StringUtils.isNotBlank(c)) {
-            queryWrapper.eq(Article::getCategory, c);
+            article.setCategory(c);
         }
-        return articleService.page(page, queryWrapper);
+        PageHelper.startPage(Integer.parseInt(p), SiteConstants.DEFAULT_PAGE_LIMIT, "id desc");
+        List<Article> list = articleService.selectArticleList(article);
+        return new PageInfo<>(list);
     }
 }

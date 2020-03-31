@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="item-meta clearfix">
                                     <div class="item-meta-date">
-                                        <span th:text="${#temporals.format(a.publishTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                        <span th:text="${#dates.format(a.publishTime, 'yyyy-MM-dd HH:mm')}"></span>
                                     </div>
                                 </div>
                             </div>

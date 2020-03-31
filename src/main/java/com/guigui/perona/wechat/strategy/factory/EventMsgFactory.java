@@ -28,7 +28,7 @@ public class EventMsgFactory {
         String[] beanNames = SpringContextUtils.getContext().getBeanNamesForType(CommonEventProcess.class);
         if (beanNames != null && beanNames.length > 0) {
             for (String beanName : beanNames) {
-                CommonEventProcess eventService = (CommonEventProcess) SpringContextUtils.getBean(beanName);
+                CommonEventProcess eventService = SpringContextUtils.getBean(beanName);
                 serviceMap.put(eventService.getEventType(), eventService);
             }
         }

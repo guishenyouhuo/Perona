@@ -1,15 +1,18 @@
 package com.guigui.perona.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.guigui.perona.common.utils.PasswordHelper;
+import com.guigui.perona.common.constants.UserConstants;
+import com.guigui.perona.common.exception.GlobalException;
+import com.guigui.perona.common.utils.*;
+import com.guigui.perona.common.utils.text.Convert;
 import com.guigui.perona.entity.UserInfo;
+import com.guigui.perona.entity.UserRole;
 import com.guigui.perona.mapper.UserInfoMapper;
 import com.guigui.perona.service.IUserInfoService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +24,7 @@ import java.util.List;
  * @since 2019-10-25
  */
 @Service
-public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements IUserInfoService {
+public class UserInfoServiceImpl implements IUserInfoService {
 
     @Autowired
     private UserInfoMapper userInfoMapper;
@@ -31,33 +34,161 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Override
     public UserInfo findByName(String username) {
-        LambdaQueryWrapper<UserInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(UserInfo::getUsername, username);
-        List<UserInfo> list = userInfoMapper.selectList(queryWrapper);
-        return list.size() > 0 ? list.get(0) : null;
+        return userInfoMapper.selectUserInfoByUserName(username);
+    }
+
+    @Override
+    public UserInfo findByMobileNo(String mobileNo) {
+        return userInfoMapper.selectUserByPhoneNumber(mobileNo);
+    }
+
+    @Override
+    public UserInfo findByEmail(String email) {
+        return userInfoMapper.selectUserByEmail(email);
     }
 
     @Override
     @Transactional
     public void add(UserInfo userInfo) {
-        passwordHelper.encryptPassword(userInfo); //加密
-        userInfoMapper.insert(userInfo);
+        // 密码加密
+        passwordHelper.encryptPassword(userInfo);
+        userInfoMapper.insertUserInfo(userInfo);
+    }
+
+    @Override
+    public List<UserInfo> selectAllocatedList(UserInfo userInfo) {
+        return userInfoMapper.selectAllocatedList(userInfo);
+    }
+
+    @Override
+    public List<UserInfo> selectUnAllocatedList(UserInfo userInfo) {
+        return userInfoMapper.selectUnAllocatedList(userInfo);
+    }
+
+    @Override
+    public String checkUserUnique(UserInfo userInfo) {
+        long userId = userInfo.getId() == null ? -1L : userInfo.getId();
+        UserInfo existUser = userInfoMapper.checkUserUnique(userInfo);
+        if (existUser != null && existUser.getId() != userId) {
+            return UserConstants.USER_NOT_UNIQUE;
+        }
+        return UserConstants.USER_UNIQUE;
+    }
+
+    @Override
+    public UserInfo selectUserInfoById(Long id) {
+        return userInfoMapper.selectUserInfoById(id);
+    }
+
+    @Override
+    public List<UserInfo> selectUserInfoList(UserInfo userInfo) {
+        return userInfoMapper.selectUserInfoList(userInfo);
     }
 
     @Override
     @Transactional
-    public void update(UserInfo userInfo) {
-        if (userInfo.getPassword() != null && !"".equals(userInfo.getPassword())) {
-            passwordHelper.encryptPassword(userInfo); //加密
+    public int insertUserInfo(UserInfo userInfo) {
+        // 密码加密
+        if (StringUtils.isNotEmpty(userInfo.getPassword())) {
+            passwordHelper.encryptPassword(userInfo);
         } else {
             userInfo.setPassword(null);
         }
-        userInfoMapper.updateById(userInfo);
+        userInfo.setCreateBy(ShiroUtils.getLoginName());
+        userInfo.setCreateTime(DateUtils.getNowDate());
+        int result = userInfoMapper.insertUserInfo(userInfo);
+        // 新增用户与角色管理
+        insertUserRole(userInfo);
+        return result;
     }
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        userInfoMapper.deleteById(id);
+    public int updateUserInfo(UserInfo userInfo) {
+        // 密码加密
+        if (StringUtils.isNotEmpty(userInfo.getPassword())) {
+            passwordHelper.encryptPassword(userInfo);
+        } else {
+            userInfo.setPassword(null);
+        }
+        userInfo.setUpdateBy(ShiroUtils.getLoginName());
+        userInfo.setUpdateTime(DateUtils.getNowDate());
+        int result = userInfoMapper.updateUserInfo(userInfo);
+        // 删除用户与角色关联
+        userInfoMapper.deleteUserRoleByUserId(userInfo.getId());
+        // 新增用户与角色管理
+        insertUserRole(userInfo);
+        return result;
+    }
+
+    @Override
+    public int updateUserRecord(UserInfo userInfo) {
+        return userInfoMapper.updateUserInfo(userInfo);
+    }
+
+    @Override
+    public int deleteUserInfoByIds(String ids) {
+        Long[] userIds = Convert.toLongArray(ids);
+        for (Long userId : userIds) {
+            checkUserAllowed(new UserInfo(userId));
+        }
+        return userInfoMapper.deleteUserInfoByIds(userIds);
+    }
+
+    @Override
+    @Transactional
+    public int deleteUserInfoById(Long id) {
+        return userInfoMapper.deleteUserInfoById(id);
+    }
+
+    /**
+     * 新增用户角色信息
+     *
+     * @param userInfo 用户对象
+     */
+    private void insertUserRole(UserInfo userInfo) {
+        Long[] roles = userInfo.getRoleIds();
+        if (roles != null) {
+            // 新增用户与角色管理
+            List<UserRole> list = new ArrayList<>();
+            for (Long roleId : userInfo.getRoleIds()) {
+                UserRole ur = new UserRole();
+                ur.setUserId(userInfo.getId());
+                ur.setRoleId(roleId);
+                list.add(ur);
+            }
+            if (list.size() > 0) {
+                userInfoMapper.batchInsertUserRole(list);
+            }
+        }
+    }
+
+    /**
+     * 校验用户是否允许操作
+     *
+     * @param userInfo 用户信息
+     */
+    public void checkUserAllowed(UserInfo userInfo) {
+        if (userInfo.getId() != null && userInfo.isSuperAdmin()) {
+            throw new GlobalException("不允许操作超级管理员用户");
+        }
+    }
+
+    @Override
+    public int resetUserPwd(UserInfo userInfo) {
+        // 密码加密
+        if (StringUtils.isNotEmpty(userInfo.getPassword())) {
+            passwordHelper.encryptPassword(userInfo);
+        } else {
+            userInfo.setPassword(null);
+        }
+        userInfo.setUpdateBy(ShiroUtils.getLoginName());
+        userInfo.setUpdateTime(DateUtils.getNowDate());
+        return userInfoMapper.updateUserInfo(userInfo);
+    }
+
+    @Override
+    public int changeStatus(UserInfo userInfo) {
+        return userInfoMapper.updateUserInfo(userInfo);
     }
 }

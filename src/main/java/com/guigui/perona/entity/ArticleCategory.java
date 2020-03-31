@@ -1,25 +1,20 @@
 package com.guigui.perona.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
 /**
- * <p>
- * 文章&&分类关联表
- * </p>
+ * 文章&&分类关联对象 article_category
  *
  * @author guigui
- * @since 2019-10-24
+ * @date 2020-03-26
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class ArticleCategory implements Serializable {
 
@@ -28,24 +23,24 @@ public class ArticleCategory implements Serializable {
     /**
      * 编号
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
      * 文章ID
      */
-    @TableField("article_id")
     private Long articleId;
 
     /**
      * 分类ID
      */
-    @TableField("category_id")
     private Long categoryId;
 
-    public ArticleCategory(Long articleId, Long categoryId) {
-        this.articleId = articleId;
-        this.categoryId = categoryId;
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("articleId", getArticleId())
+                .append("categoryId", getCategoryId())
+                .toString();
     }
-
 }

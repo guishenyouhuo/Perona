@@ -3,7 +3,6 @@ package com.guigui.perona.common.properties;
 import lombok.Data;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
 
 /**
  * @Description: 系统配置
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.PropertySource;
  */
 @Data
 @SpringBootConfiguration
-@PropertySource(value = {"classpath:perona.properties"})
 @ConfigurationProperties(prefix = "perona")
 public class PeronaProperties {
 
@@ -21,5 +19,9 @@ public class PeronaProperties {
     private SwaggerProperties swagger = new SwaggerProperties();
 
     private CloudProperties cloud = new CloudProperties();
+
+    private GenProperties gen = new GenProperties();
+
+    private ProjectProperties project = new ProjectProperties();
 
 }

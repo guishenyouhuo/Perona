@@ -1,77 +1,104 @@
 package com.guigui.perona.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.guigui.perona.entity.ArtTag;
-import com.guigui.perona.entity.Article;
-import com.guigui.perona.entity.ArticleTag;
-import com.guigui.perona.mapper.ArticleTagMapper;
-import com.guigui.perona.service.IArticleTagService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import com.guigui.perona.mapper.ArticleTagMapper;
+import com.guigui.perona.entity.ArticleTag;
+import com.guigui.perona.service.IArticleTagService;
+import com.guigui.perona.common.utils.text.Convert;
 
 /**
- * <p>
- * 文章&&标签关联表 服务实现类
- * </p>
- *
+ * 文章&&标签关联Service业务层处理
+ * 
  * @author guigui
- * @since 2019-10-24
+ * @date 2020-03-26
  */
 @Service
-public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagMapper, ArticleTag> implements IArticleTagService {
+public class ArticleTagServiceImpl implements IArticleTagService {
 
     @Autowired
     private ArticleTagMapper articleTagMapper;
 
+    /**
+     * 查询文章&&标签关联
+     * 
+     * @param id 文章&&标签关联ID
+     * @return 文章&&标签关联
+     */
     @Override
-    public List<ArtTag> findByArticleId(Long articleId) {
-        return articleTagMapper.findByArticleId(articleId);
+    public ArticleTag selectArticleTagById(Long id) {
+        return articleTagMapper.selectArticleTagById(id);
+    }
+
+    /**
+     * 查询文章&&标签关联列表
+     * 
+     * @param articleTag 文章&&标签关联
+     * @return 文章&&标签关联
+     */
+    @Override
+    public List<ArticleTag> selectArticleTagList(ArticleTag articleTag) {
+        return articleTagMapper.selectArticleTagList(articleTag);
+    }
+
+    /**
+     * 新增文章&&标签关联
+     * 
+     * @param articleTag 文章&&标签关联
+     * @return 结果
+     */
+    @Override
+    public int insertArticleTag(ArticleTag articleTag) {
+        return articleTagMapper.insertArticleTag(articleTag);
+    }
+
+    /**
+     * 修改文章&&标签关联
+     * 
+     * @param articleTag 文章&&标签关联
+     * @return 结果
+     */
+    @Override
+    public int updateArticleTag(ArticleTag articleTag) {
+        return articleTagMapper.updateArticleTag(articleTag);
+    }
+
+    /**
+     * 删除文章&&标签关联对象
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    @Override
+    public int deleteArticleTagByIds(String ids) {
+        return articleTagMapper.deleteArticleTagByIds(Convert.toStrArray(ids));
+    }
+
+    /**
+     * 删除文章&&标签关联信息
+     * 
+     * @param id 文章&&标签关联ID
+     * @return 结果
+     */
+    @Override
+    public int deleteArticleTagById(Long id) {
+        return articleTagMapper.deleteArticleTagById(id);
     }
 
     @Override
-    @Transactional
-    public void add(ArticleTag articleTag) {
-        if (!exists(articleTag)) {
-            articleTagMapper.insert(articleTag);
-        }
-    }
-
-    private boolean exists(ArticleTag articleTag) {
-        LambdaQueryWrapper<ArticleTag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ArticleTag::getArticleId, articleTag.getArticleId());
-        queryWrapper.eq(ArticleTag::getTagId, articleTag.getTagId());
-        return articleTagMapper.selectList(queryWrapper).size() > 0;
+    public void deleteByArticleId(Long articleId) {
+        articleTagMapper.deleteByArticleId(articleId);
     }
 
     @Override
-    public List<ArticleTag> findByTagId(Long tagId) {
-        LambdaQueryWrapper<ArticleTag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ArticleTag::getTagId, tagId);
-        return articleTagMapper.selectList(queryWrapper);
+    public void deleteByTagId(Long tagId) {
+        articleTagMapper.deleteByTagId(tagId);
     }
 
     @Override
-    @Transactional
-    public void deleteByArticleId(Long id) {
-        LambdaQueryWrapper<ArticleTag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ArticleTag::getArticleId, id);
-        articleTagMapper.delete(queryWrapper);
+    public int batchInsert(List<ArticleTag> articleTagList) {
+        return articleTagMapper.batchInsert(articleTagList);
     }
 
-    @Override
-    @Transactional
-    public void deleteByTagsId(Long id) {
-        LambdaQueryWrapper<ArticleTag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ArticleTag::getTagId, id);
-        articleTagMapper.delete(queryWrapper);
-    }
-
-    @Override
-    public List<Article> findByTagName(String tag) {
-        return articleTagMapper.findByTagName(tag);
-    }
 }

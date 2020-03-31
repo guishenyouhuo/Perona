@@ -1,133 +1,119 @@
 package com.guigui.perona.controller;
 
+import java.util.List;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.guigui.perona.common.annotation.Log;
+import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.dto.ArchivesWithArticle;
-import com.guigui.perona.common.exception.GlobalException;
-import com.guigui.perona.common.utils.QueryPage;
-import com.guigui.perona.common.utils.Return;
-import com.guigui.perona.entity.ArtTag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import com.guigui.perona.entity.Article;
 import com.guigui.perona.service.IArticleService;
-import com.guigui.perona.service.IArticleTagService;
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.guigui.perona.common.BaseController;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.guigui.perona.manage.web.domain.AjaxResult;
+import com.guigui.perona.manage.web.page.TableDataInfo;
 
 /**
- * <p>
- * 文章表 前端控制器
- * </p>
+ * 文章Controller
  *
  * @author guigui
- * @since 2019-10-24
+ * @date 2020-03-25
  */
-@Slf4j
-@RestController
-@RequestMapping("/api/article")
-@Api(value = "ArticleController", tags = {"文章管理接口"})
+@Controller
+@RequestMapping("/manage/article")
 public class ArticleController extends BaseController {
+    private String prefix = "manage/blog/article";
 
     @Autowired
     private IArticleService articleService;
 
-    @Autowired
-    private IArticleTagService articleTagService;
-
-    /**
-     * 查询文章总数量
-     *
-     * @return
-     */
-    @GetMapping("/count")
-    public Return<Integer> findAllCount() {
-        return new Return<>(articleService.count(new QueryWrapper<>()));
+    @GetMapping()
+    public String article() {
+        return prefix + "/article";
     }
 
     /**
-     * 分页查询
-     *
-     * @param queryPage
-     * @param article
-     * @return
+     * 查询文章列表
      */
-    @GetMapping("/list")
-    public Return<Map<String, Object>> findByPage(Article article, QueryPage queryPage) {
-        return new Return<>(super.getData(articleService.list(article, queryPage)));
-    }
-
-    @GetMapping("{id}")
-    public Return<Article> findById(@PathVariable Long id) {
-        return new Return<>(articleService.findById(id));
+    @PostMapping("/list")
+    @ResponseBody
+    public TableDataInfo list(Article article) {
+        startPage();
+        List<Article> list = articleService.selectArticleList(article);
+        return getDataTable(list);
     }
 
     /**
-     * 查询指定ArticleId的Tags数据
-     *
-     * @param id
-     * @return
+     * 新增文章
      */
-    @GetMapping("/{id}/tags")
-    public Return<List<String>> findTags(@PathVariable Long id) {
-        List<String> list = new ArrayList<>();
-        List<ArtTag> tagList = articleTagService.findByArticleId(id);
-        for (ArtTag t : tagList) {
-            list.add(t.getName());
+    @GetMapping("/add")
+    public String addView() {
+        return prefix + "/add";
+    }
+
+    /**
+     * 新增保存文章
+     */
+    @PostMapping("/add")
+    @ResponseBody
+    public AjaxResult addSave(Article article) {
+        if (UserConstants.NOT_UNIQUE.equals(articleService.checkArticleUnique(article))) {
+            return error("新增文章'" + article.getTitle() + "'失败，文章标题已存在");
         }
-        return new Return<>(list);
+        return toAjax(articleService.insertArticle(article));
+    }
+
+    /**
+     * 修改文章
+     */
+    @GetMapping("/edit/{id}")
+    public String editView(@PathVariable("id") Long id, ModelMap mmap) {
+        Article article = articleService.selectArticleById(id);
+        mmap.put("article", article);
+        return prefix + "/edit";
+    }
+
+    /**
+     * 修改保存文章
+     */
+    @PostMapping("/edit")
+    @ResponseBody
+    public AjaxResult editSave(Article article) {
+        if (UserConstants.NOT_UNIQUE.equals(articleService.checkArticleUnique(article))) {
+            return error("编辑文章'" + article.getTitle() + "'失败，文章标题已存在");
+        }
+        return toAjax(articleService.updateArticle(article));
+    }
+
+    /**
+     * 删除文章
+     */
+    @PostMapping("/remove")
+    @ResponseBody
+    public AjaxResult remove(String ids) {
+        return toAjax(articleService.deleteArticleByIds(ids));
     }
 
     /**
      * 查询所有的Archives
-     *
-     * @return
      */
     @GetMapping(value = "/archives")
-    public Return<List<ArchivesWithArticle>> findArchives() {
-        return new Return<>(articleService.findArchives());
+    public List<ArchivesWithArticle> findArchives() {
+        return articleService.findArchives();
     }
 
-    @PostMapping
-    @Log("新增文章")
-    public Return save(@RequestBody Article article) {
-        try {
-            articleService.add(article);
-            return new Return();
-        } catch (Exception e) {
-            log.error("保存文章出现异常！article:{}", article.getTitle(), e);
-            throw new GlobalException(e.getMessage());
-        }
+    /**
+     * 校验文章标题
+     */
+    @PostMapping("/checkArticleUnique")
+    @ResponseBody
+    public String checkArticleUnique(Article article) {
+        return articleService.checkArticleUnique(article);
     }
 
-    @PutMapping
-    @Log("更新文章")
-    public Return update(@RequestBody Article article) {
-        try {
-            articleService.update(article);
-            return new Return();
-        } catch (Exception e) {
-            log.error("更新文章出现异常！article:{}", article.getTitle(), e);
-            throw new GlobalException(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    @Log("删除文章")
-    public Return delete(@PathVariable Long id) {
-        try {
-            articleService.delete(id);
-            return new Return();
-        } catch (Exception e) {
-            log.error("删除文章出现异常！articleId:{}", id, e);
-            throw new GlobalException(e.getMessage());
-        }
-    }
 }

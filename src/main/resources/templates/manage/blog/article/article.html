@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="manage/include :: header('文章列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="article-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                标题：<input type="text" name="title"/>
+                            </li>
+                            <li>
+                                作者：<input type="text" name="author"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()" shiro:hasPermission="manage:article:add">
+                    <i class="fa fa-plus"></i> 发布文章
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.editTab()" shiro:hasPermission="manage:article:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="manage:article:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="manage:article:export">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                 </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="manage/include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('manage:article:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('manage:article:remove')}]];
+        var prefix = ctx + "manage/article";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                // exportUrl: prefix + "/export",
+                modalName: "文章",
+                sortName: "createTime",
+                sortOrder: "desc",
+                striped: true,
+                showPageGo: true,
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : '编号'
+                },
+                {
+                    field : 'title', 
+                    title : '标题',
+                    formatter: function(value, row, index) {
+                        var tooltipStr = $.table.tooltip(value, 15);
+                        return '<a href="javascript:void(0)" onclick="detail(\'' + row.id + '\', \'' + row.state + '\')">' + tooltipStr + '</a>'
+                    }
+                },
+                {
+                    field : 'author', 
+                    title : '作者'
+                },
+                {
+                    field : 'categoryName',
+                    title : '分类'
+                },
+                {
+                    field : 'createTime',
+                    title : '创建时间'
+                },
+                {
+                    field : 'publishTime', 
+                    title : '发布时间'
+                },
+                {
+                    field : 'state',
+                    title : '状态',
+                    formatter: function (value, row, index) {
+                        if (value == "1") {
+                            return '<div><span class="badge badge-primary">已发布</span></div>'
+                        } else {
+                            return '<div><span class="badge badge-danger">未发布</span></div>'
+                        }
+                    }
+                },
+                {
+                    field : 'artTags',
+                    title : '标签',
+                    formatter: function (value, row, index) {
+                        if (value != null && value.length > 0) {
+                            let html = '';
+                            value.forEach(t => {
+                                html += '<span class="label label-info">' + t.name + '</span>&nbsp;&nbsp;';
+                            });
+                            return html;
+                        } else {
+                            return '';
+                        }
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.editTab(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /*查看文章*/
+        function detail(id, state) {
+            if (state != "1") {
+                $.modal.alert("文章还未发布！");
+                return;
+            }
+            // 打开文章
+            window.open('/article/' + id, "_blank");
+        }
+
+    </script>
+</body>
+</html>

@@ -38,11 +38,12 @@
     <div class="post-header">
         <h1 class="post-title" itemprop="name headline"> [[${p.title}]] </h1>
         <div class="post-data">发表于
-            <span th:text="${#temporals.format(p.publishTime, 'yyyy/MM/dd HH:mm:ss')}"></span>
+            <span th:text="${#dates.format(p.publishTime, 'yyyy-MM-dd HH:mm')}"></span>
             in <a th:href="'/category/' + ${p.category}">[[${p.categoryName}]]</a>
             with <a href="#comments"> [[${comments.count}]] comments</a>
         </div>
     </div>
+
     <div id="post-content" class="post-content" itemprop="articleBody">
         <p class="post-tags" th:if="${p.artTags} != null">
             <a th:each="tag : ${p.artTags}" href="#">[[${tag.name}]]</a>
@@ -51,7 +52,7 @@
         <p th:utext="${p.content}"></p>
 
         <p class="post-info">
-            最后编辑时间为: <span th:text="${#temporals.format(p.editTime, 'yyyy/MM/dd HH:mm:ss')}"></span>
+            最后编辑时间为: <span th:text="${#dates.format(p.editTime, 'yyyy-MM-dd HH:mm')}"></span>
         </p>
     </div>
 </article>
@@ -65,8 +66,8 @@
             <input name="articleTitle" th:value="${p.title}" style="display: none;">
             <input name="articleId" th:value="${p.id}" style="display: none;">
             <input name="sort" value="0" style="display: none;">
-            <input name="pid" id="pId" value="" style="display: none;">
-            <input name="cname" id="cName" value="" style="display: none;">
+            <input name="pId" id="pId" value="" style="display: none;">
+            <input name="cName" id="cName" value="" style="display: none;">
             <input type="text" name="name" maxlength="12" id="author" class="form-control input-control clearfix" placeholder="Name (*)" value="" required="">
             <input type="email" name="email" id="mail" class="form-control input-control clearfix" placeholder="Email (*)" value="" required="">
             <input type="url" name="url" id="url" class="form-control input-control clearfix" placeholder="Site (http://)" value="">

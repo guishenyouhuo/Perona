@@ -1,23 +1,134 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guigui.perona.mapper.ArticleMapper">
-    <select id="findArchivesDates" resultType="String">
-        SELECT DISTINCT
-            DATE_FORMAT( publish_time, '%Y-%m' )
-        FROM
-            article
-        ORDER BY
-            DATE_FORMAT( publish_time, '%Y-%m' ) DESC
+    <resultMap type="Article" id="ArticleResult">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="cover" column="cover"/>
+        <result property="author" column="author"/>
+        <result property="content" column="content"/>
+        <result property="contentMd" column="content_md"/>
+        <result property="category" column="category"/>
+        <result property="origin" column="origin"/>
+        <result property="state" column="state"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="editTime" column="edit_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <sql id="articleFields">id, title, cover, author, content, content_md, category, origin, state, publish_time, edit_time, create_time, type</sql>
+
+    <select id="selectArticleList" parameterType="Article" resultMap="ArticleResult">
+        select
+        <include refid="articleFields"/>
+        from article
+        <where>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="cover != null  and cover != ''"> and cover = #{cover}</if>
+            <if test="author != null  and author != ''"> and author = #{author}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="contentMd != null  and contentMd != ''"> and content_md = #{contentMd}</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="origin != null  and origin != ''"> and origin = #{origin}</if>
+            <if test="state != null  and state != ''"> and state = #{state}</if>
+            <if test="publishTime != null "> and publish_time = #{publishTime}</if>
+            <if test="editTime != null "> and edit_time = #{editTime}</if>
+            <if test="type != null "> and type = #{type}</if>
+        </where>
     </select>
 
-    <select id="findArchivesByDate" resultType="Article">
-        SELECT
-            id,
-            title,
-            publish_time
-        FROM
-            article
-        WHERE
-            publish_time LIKE CONCAT ('%', #{date}, '%')
+    <select id="selectArticleById" parameterType="Long" resultMap="ArticleResult">
+        select
+        <include refid="articleFields"/>
+        from article
+        where id = #{id}
     </select>
+    <select id="selectArticleTitle" parameterType="String" resultMap="ArticleResult">
+        select
+        id, title
+        from article
+        where title = #{title}
+    </select>
+
+    <insert id="insertArticle" parameterType="Article" useGeneratedKeys="true" keyProperty="id">
+        insert into article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">title,</if>
+            <if test="cover != null  and cover != ''">cover,</if>
+            <if test="author != null  and author != ''">author,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="contentMd != null  and contentMd != ''">content_md,</if>
+            <if test="category != null  and category != ''">category,</if>
+            <if test="origin != null  and origin != ''">origin,</if>
+            <if test="state != null  and state != ''">state,</if>
+            <if test="publishTime != null ">publish_time,</if>
+            <if test="editTime != null ">edit_time,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="type != null ">type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="cover != null  and cover != ''">#{cover},</if>
+            <if test="author != null  and author != ''">#{author},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="contentMd != null  and contentMd != ''">#{contentMd},</if>
+            <if test="category != null  and category != ''">#{category},</if>
+            <if test="origin != null  and origin != ''">#{origin},</if>
+            <if test="state != null  and state != ''">#{state},</if>
+            <if test="publishTime != null ">#{publishTime},</if>
+            <if test="editTime != null ">#{editTime},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="type != null ">#{type},</if>
+        </trim>
+    </insert>
+
+    <update id="updateArticle" parameterType="Article">
+        update article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="cover != null  and cover != ''">cover = #{cover},</if>
+            <if test="author != null  and author != ''">author = #{author},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="contentMd != null  and contentMd != ''">content_md = #{contentMd},</if>
+            <if test="category != null  and category != ''">category = #{category},</if>
+            <if test="origin != null  and origin != ''">origin = #{origin},</if>
+            <if test="state != null  and state != ''">state = #{state},</if>
+            <if test="publishTime != null ">publish_time = #{publishTime},</if>
+            <if test="editTime != null ">edit_time = #{editTime},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="type != null ">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteArticleById" parameterType="Long">
+        delete from article where id = #{id}
+    </delete>
+
+    <delete id="deleteArticleByIds" parameterType="String">
+        delete from article where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectArchivesDates" resultType="String">
+        select distinct DATE_FORMAT( publish_time, '%Y-%m' )
+        from article
+        order by DATE_FORMAT(publish_time, '%Y-%m') desc
+    </select>
+
+    <select id="selectArchivesByDate" resultType="Article">
+        select id, title, publish_time
+        from article
+        where publish_time like concat ('%', #{date}, '%')
+    </select>
+
+    <select id="selectRecent" resultType="Article">
+        select id, title, publish_time
+        from article
+        where state = 1 order by id desc limit #{recentNum}
+    </select>
+
 </mapper>

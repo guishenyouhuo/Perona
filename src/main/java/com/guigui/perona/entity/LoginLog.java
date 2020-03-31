@@ -1,24 +1,23 @@
 package com.guigui.perona.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
+
 /**
- * <p>
- * 
- * </p>
+ * 【请填写功能名称】对象 login_log
  *
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-03-31
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class LoginLog implements Serializable {
 
@@ -27,40 +26,58 @@ public class LoginLog implements Serializable {
     /**
      * 编号
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
      * 用户名
      */
-    @TableField("username")
     private String username;
 
     /**
      * IP地址
      */
-    @TableField("ip")
     private String ip;
 
     /**
      * 登录地点
      */
-    @TableField("location")
     private String location;
 
     /**
-     * 登录时间
+     * 登陆时间
      */
-    @TableField("create_time")
-    private LocalDateTime createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
     /**
      * 登录设备
      */
-    @TableField("device")
     private String device;
 
-    @TableField(exist = false)
-    private String filedTime;
+    /**
+     * 登录状态（0成功 1失败）
+     */
+    private String status;
 
+    /**
+     * 提示消息
+     */
+    private String msg;
+
+    /** 请求参数 */
+    private Map<String, Object> params;
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("username", getUsername())
+                .append("ip", getIp())
+                .append("location", getLocation())
+                .append("createTime", getCreateTime())
+                .append("device", getDevice())
+                .append("status", getStatus())
+                .append("msg", getMsg())
+                .toString();
+    }
 }

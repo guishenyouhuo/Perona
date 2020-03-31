@@ -1,5 +1,266 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guigui.perona.mapper.UserInfoMapper">
+    <resultMap type="UserInfo" id="UserInfoResult">
+        <result property="id" column="id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="username" column="username"/>
+        <result property="nickname" column="nickname"/>
+        <result property="userType" column="user_type"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="sex" column="sex"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="avatar" column="avatar"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="loginDate" column="login_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="introduce" column="introduce"/>
+        <result property="remark" column="remark"/>
+        <association property="deptInfo" column="dept_id" javaType="DeptInfo" resultMap="DeptResult"/>
+        <collection property="roleList" javaType="java.util.List" resultMap="RoleResult"/>
+    </resultMap>
+
+    <resultMap id="DeptResult" type="DeptInfo">
+        <id property="deptId" column="dept_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="leader" column="leader"/>
+        <result property="status" column="dept_status"/>
+    </resultMap>
+
+    <resultMap id="RoleResult" type="RoleInfo">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleKey" column="role_key"/>
+        <result property="roleSort" column="role_sort"/>
+        <result property="dataScope" column="data_scope"/>
+        <result property="status" column="role_status"/>
+    </resultMap>
+
+    <sql id="userInfoFields">id, dept_id, username, nickname, user_type, email, phone_number, sex, password, salt, avatar, status, del_flag, login_ip, login_date, create_by, create_time, update_by, update_time, introduce, remark</sql>
+
+    <sql id="selectUserVo">
+        select  u.id, u.dept_id, u.username, u.nickname, u.user_type, u.email, u.avatar, u.phone_number, u.sex, u.password, u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.create_time, u.introduce, u.remark,
+       		    d.dept_id, d.parent_id, d.dept_name, d.order_num, d.leader, d.status as dept_status,
+       		    r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
+		from user_info u
+			 left join dept_info d on u.dept_id = d.dept_id
+			 left join user_role ur on u.id = ur.user_id
+			 left join role_info r on r.role_id = ur.role_id
+    </sql>
+
+    <select id="selectUserInfoList" parameterType="UserInfo" resultMap="UserInfoResult">
+        select u.id, u.dept_id, u.username, u.nickname, u.email, u.avatar, u.phone_number, u.password, u.sex,
+               u.salt, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
+               d.dept_name, d.leader
+        from user_info u
+        left join dept_info d on u.dept_id = d.dept_id
+        where u.del_flag = '0'
+        <if test="username != null  and username != ''">
+            and u.username like concat('%', #{username}, '%')
+        </if>
+        <if test="phoneNumber != null  and phoneNumber != ''">
+            and u.phone_number = #{phoneNumber}
+        </if>
+        <if test="status != null  and status != ''">
+            and u.status = #{status}
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND date_format(u.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            AND date_format(u.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+        </if>
+        <if test="deptId != null and deptId != 0">
+            AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM dept_info t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectUserInfoById" parameterType="Long" resultMap="UserInfoResult">
+        <include refid="selectUserVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectUserInfoByUserName" parameterType="String" resultMap="UserInfoResult">
+        <include refid="selectUserVo"/>
+        where u.username = #{userName}
+    </select>
+
+    <select id="selectUserInfoByPhoneNumber" parameterType="String" resultMap="UserInfoResult">
+        <include refid="selectUserVo"/>
+        where u.phone_number = #{phoneNumber}
+    </select>
+
+    <select id="selectUserInfoByEmail" parameterType="String" resultMap="UserInfoResult">
+        <include refid="selectUserVo"/>
+        where u.email = #{email}
+    </select>
+
+    <insert id="insertUserInfo" parameterType="UserInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId != null ">dept_id,</if>
+            <if test="username != null  and username != ''">username,</if>
+            <if test="nickname != null  and nickname != ''">nickname,</if>
+            <if test="userType != null  and userType != ''">user_type,</if>
+            <if test="email != null  and email != ''">email,</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">phone_number,</if>
+            <if test="sex != null  and sex != ''">sex,</if>
+            <if test="password != null  and password != ''">password,</if>
+            <if test="salt != null  and salt != ''">salt,</if>
+            <if test="avatar != null  and avatar != ''">avatar,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="loginIp != null  and loginIp != ''">login_ip,</if>
+            <if test="loginDate != null ">login_date,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="introduce != null  and introduce != ''">introduce,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="username != null  and username != ''">#{username},</if>
+            <if test="nickname != null  and nickname != ''">#{nickname},</if>
+            <if test="userType != null  and userType != ''">#{userType},</if>
+            <if test="email != null  and email != ''">#{email},</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">#{phoneNumber},</if>
+            <if test="sex != null  and sex != ''">#{sex},</if>
+            <if test="password != null  and password != ''">#{password},</if>
+            <if test="salt != null  and salt != ''">#{salt},</if>
+            <if test="avatar != null  and avatar != ''">#{avatar},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="loginIp != null  and loginIp != ''">#{loginIp},</if>
+            <if test="loginDate != null ">#{loginDate},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="introduce != null  and introduce != ''">#{introduce},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserInfo" parameterType="UserInfo">
+        update user_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deptId != null ">dept_id = #{deptId},</if>
+            <if test="username != null  and username != ''">username = #{username},</if>
+            <if test="nickname != null  and nickname != ''">nickname = #{nickname},</if>
+            <if test="userType != null  and userType != ''">user_type = #{userType},</if>
+            <if test="email != null  and email != ''">email = #{email},</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">phone_number = #{phoneNumber},</if>
+            <if test="sex != null  and sex != ''">sex = #{sex},</if>
+            <if test="password != null  and password != ''">password = #{password},</if>
+            <if test="salt != null  and salt != ''">salt = #{salt},</if>
+            <if test="avatar != null  and avatar != ''">avatar = #{avatar},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="loginIp != null  and loginIp != ''">login_ip = #{loginIp},</if>
+            <if test="loginDate != null ">login_date = #{loginDate},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="introduce != null  and introduce != ''">introduce = #{introduce},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserInfoById" parameterType="Long">
+        delete from user_info where id = #{id}
+    </delete>
+
+    <delete id="deleteUserInfoByIds" parameterType="Long">
+        update user_info set del_flag = '2' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectAllocatedList" parameterType="UserInfo" resultMap="UserInfoResult">
+        select distinct u.id, u.dept_id, u.username, u.nickname, u.email, u.avatar, u.phone_number, u.status, u.create_time
+        from user_info u
+            left join user_role ur on u.id = ur.user_id
+            left join role_info r on r.role_id = ur.role_id
+        where u.del_flag = '0' and r.role_id = #{selectRoleId}
+        <if test="username != null and username != ''">
+            AND u.username like concat('%', #{username}, '%')
+        </if>
+        <if test="phoneNumber != null and phoneNumber != ''">
+            AND u.phone_number like concat('%', #{phoneNumber}, '%')
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectUnAllocatedList" parameterType="UserInfo" resultMap="UserInfoResult">
+        select distinct u.id, u.dept_id, u.username, u.nickname, u.email, u.avatar, u.phone_number, u.status, u.create_time
+        from user_info u
+        left join user_role ur on u.id = ur.user_id
+        left join role_info r on r.role_id = ur.role_id
+        where u.del_flag = '0' and (r.role_id != #{selectRoleId} or r.role_id IS NULL)
+        and u.id not in (select u.id from user_info u inner join user_role ur on u.id = ur.user_id and ur.role_id = #{selectRoleId})
+        <if test="username != null and username != ''">
+            AND u.username like concat('%', #{username}, '%')
+        </if>
+        <if test="phoneNumber != null and phoneNumber != ''">
+            AND u.phone_number like concat('%', #{phoneNumber}, '%')
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="checkUserUnique" parameterType="UserInfo" resultMap="UserInfoResult">
+        select
+        <include refid="userInfoFields"/>
+        from user_info
+        where 1 = 1
+        <if test="username != null and username != ''">
+            AND username = #{username}
+        </if>
+        <if test="phoneNumber != null and phoneNumber != ''">
+            AND phone_number = #{phoneNumber}
+        </if>
+        <if test="email != null and email != ''">
+            AND email = #{email}
+        </if>
+	</select>
+
+    <delete id="deleteUserRoleInfo" parameterType="UserRole">
+		delete from user_role where user_id=#{userId} and role_id=#{roleId}
+	</delete>
+
+    <delete id="deleteUserRoleByUserId" parameterType="Long">
+		delete from user_role where user_id=#{userId}
+	</delete>
+
+    <delete id="deleteUserRoleInfos">
+        delete from user_role where role_id=#{roleId} and user_id in
+        <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <insert id="batchInsertUserRole">
+        insert into user_role(user_id, role_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.userId},#{item.roleId})
+        </foreach>
+    </insert>
 
 </mapper>

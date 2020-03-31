@@ -18,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ArchivesWithArticle implements Serializable {
 
+    private static final long serialVersionUID = -1280975952384628310L;
     private String date;
     private List<Article> articles;
 }

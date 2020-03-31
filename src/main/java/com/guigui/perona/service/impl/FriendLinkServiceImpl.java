@@ -1,56 +1,101 @@
 package com.guigui.perona.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.guigui.perona.common.utils.QueryPage;
-import com.guigui.perona.entity.FriendLink;
-import com.guigui.perona.mapper.FriendLinkMapper;
-import com.guigui.perona.service.IFriendLinkService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+
+import com.guigui.perona.common.constants.UserConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.guigui.perona.mapper.FriendLinkMapper;
+import com.guigui.perona.entity.FriendLink;
+import com.guigui.perona.service.IFriendLinkService;
+import com.guigui.perona.common.utils.text.Convert;
 
 /**
- * <p>
- * 友链表 服务实现类
- * </p>
- *
+ * 友链Service业务层处理
+ * 
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-03-28
  */
 @Service
-public class FriendLinkServiceImpl extends ServiceImpl<FriendLinkMapper, FriendLink> implements IFriendLinkService {
+public class FriendLinkServiceImpl implements IFriendLinkService {
 
     @Autowired
-    private FriendLinkMapper linkMapper;
+    private FriendLinkMapper friendLinkMapper;
 
+    /**
+     * 查询友链
+     * 
+     * @param id 友链ID
+     * @return 友链
+     */
     @Override
-    public IPage<FriendLink> list(FriendLink link, QueryPage queryPage) {
-        IPage<FriendLink> page = new Page<>(queryPage.getPage(), queryPage.getLimit());
-        LambdaQueryWrapper<FriendLink> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(link.getName()), FriendLink::getName, link.getName());
-        queryWrapper.orderByDesc(FriendLink::getId);
-        return linkMapper.selectPage(page, queryWrapper);
+    public FriendLink selectFriendLinkById(Long id) {
+        return friendLinkMapper.selectFriendLinkById(id);
+    }
+
+    /**
+     * 查询友链列表
+     * 
+     * @param friendLink 友链
+     * @return 友链
+     */
+    @Override
+    public List<FriendLink> selectFriendLinkList(FriendLink friendLink) {
+        return friendLinkMapper.selectFriendLinkList(friendLink);
+    }
+
+    /**
+     * 新增友链
+     * 
+     * @param friendLink 友链
+     * @return 结果
+     */
+    @Override
+    public int insertFriendLink(FriendLink friendLink) {
+        return friendLinkMapper.insertFriendLink(friendLink);
+    }
+
+    /**
+     * 修改友链
+     * 
+     * @param friendLink 友链
+     * @return 结果
+     */
+    @Override
+    public int updateFriendLink(FriendLink friendLink) {
+        return friendLinkMapper.updateFriendLink(friendLink);
+    }
+
+    /**
+     * 删除友链对象
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    @Override
+    public int deleteFriendLinkByIds(String ids) {
+        return friendLinkMapper.deleteFriendLinkByIds(Convert.toStrArray(ids));
+    }
+
+    /**
+     * 删除友链信息
+     * 
+     * @param id 友链ID
+     * @return 结果
+     */
+    @Override
+    public int deleteFriendLinkById(Long id) {
+        return friendLinkMapper.deleteFriendLinkById(id);
     }
 
     @Override
-    @Transactional
-    public void add(FriendLink link) {
-        linkMapper.insert(link);
+    public String checkFriendLinkUnique(FriendLink friendLink) {
+        long linkId = friendLink.getId() == null ? -1L : friendLink.getId();
+        FriendLink info = friendLinkMapper.selectLinkByName(friendLink.getName());
+        if (info != null && info.getId() != linkId) {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
     }
 
-    @Override
-    @Transactional
-    public void update(FriendLink link) {
-        this.updateById(link);
-    }
-
-    @Override
-    @Transactional
-    public void delete(Long id) {
-        linkMapper.deleteById(id);
-    }
 }

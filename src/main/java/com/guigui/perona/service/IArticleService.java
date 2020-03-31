@@ -1,76 +1,85 @@
 package com.guigui.perona.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.guigui.perona.common.dto.ArchivesWithArticle;
-import com.guigui.perona.common.utils.QueryPage;
 import com.guigui.perona.entity.Article;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
 /**
- * <p>
- * 文章表 服务类
- * </p>
+ * 文章Service接口
  *
  * @author guigui
- * @since 2019-10-24
+ * @date 2020-03-25
  */
-public interface IArticleService extends IService<Article> {
-
-    List<Article> findAll();
+public interface IArticleService {
+    /**
+     * 查询文章
+     *
+     * @param id 文章ID
+     * @return 文章
+     */
+    Article selectArticleById(Long id);
 
     /**
-     * 查询按照时间归档的整合数据，
-     * 格式：[{"2019-01", [{article},{article}...]}, {"2018-02", [{article}, {article}...]}]
+     * 查询文章列表
      *
-     * @return
+     * @param article 文章
+     * @return 文章集合
+     */
+    List<Article> selectArticleList(Article article);
+
+    /**
+     * 新增文章
+     *
+     * @param article 文章
+     * @return 结果
+     */
+    int insertArticle(Article article);
+
+    /**
+     * 修改文章
+     *
+     * @param article 文章
+     * @return 结果
+     */
+    int updateArticle(Article article);
+
+    /**
+     * 批量删除文章
+     *
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    int deleteArticleByIds(String ids);
+
+    /**
+     * 删除文章信息
+     *
+     * @param id 文章ID
+     * @return 结果
+     */
+    int deleteArticleById(Long id);
+
+    /**
+     * 按日期分类查询文章
+     *
+     * @return 结果
      */
     List<ArchivesWithArticle> findArchives();
 
     /**
-     * 根据ID 查询
-     *
-     * @param id
-     * @return
+     * 查询最近文章
+     * @param recentNum 最近数量
+     * @return 文章列表
      */
-    Article findById(Long id);
+    List<Article> selectRecentArticles(int recentNum);
 
     /**
-     * 分页查询
+     * 校验文章是否唯一
      *
-     * @param article
-     * @param queryPage
-     * @return
+     * @param article 文章信息
+     * @return 结果
      */
-    IPage<Article> list(Article article, QueryPage queryPage);
+    String checkArticleUnique(Article article);
 
-    /**
-     * 添加
-     *
-     * @param article
-     */
-    void add(Article article);
-
-    /**
-     * 更新
-     *
-     * @param article
-     */
-    void update(Article article);
-
-    /**
-     * 删除
-     *
-     * @param id
-     */
-    void delete(Long id);
-
-    /**
-     * 根据分类名称查询文章数据
-     *
-     * @param category
-     * @return
-     */
-    List<Article> findByCategory(String category);
 }

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date: 2019-10-26 10:23
  */
 @Configuration
-@MapperScan("com.guigui.perona.mapper")
+@MapperScan({"com.guigui.perona.mapper", "com.guigui.perona.manage.tool.gencode.mapper"})
 public class MybatisPlusConfig {
 
     /**

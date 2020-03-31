@@ -1,17 +1,83 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guigui.perona.mapper.CategoryMapper">
-    <!-- 根据文章id查询其关联分类表中的数据 -->
-    <select id="findCategoryByArticleId" parameterType="long" resultType="Category">
-        SELECT
-            c.name
-        FROM
-            article a,
-            category c,
-            article_category ac
-        WHERE
-            a.id = ac.article_id
-            AND c.id = ac.category_id
-            AND a.id = #{id}
+    <resultMap type="Category" id="CategoryResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="articleId" column="article_id"/>
+    </resultMap>
+
+    <sql id="categoryFields">id, name</sql>
+
+    <select id="selectCategoryList" parameterType="Category" resultMap="CategoryResult">
+        select
+        <include refid="categoryFields"/>
+        from category
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
     </select>
+    
+    <select id="selectCategoryById" parameterType="Long" resultMap="CategoryResult">
+        select
+        <include refid="categoryFields"/>
+        from category
+        where id = #{id}
+    </select>
+
+    <select id="selectCategoryByName" parameterType="String" resultMap="CategoryResult">
+        select
+        <include refid="categoryFields"/>
+        from category
+        where name = #{namme}
+    </select>
+        
+    <insert id="insertCategory" parameterType="Category" useGeneratedKeys="true" keyProperty="id">
+        insert into category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCategory" parameterType="Category">
+        update category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCategoryById" parameterType="Long">
+        delete from category where id = #{id}
+    </delete>
+
+    <delete id="deleteCategoryByIds" parameterType="String">
+        delete from category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 根据文章id查询其关联分类表中的数据 -->
+    <select id="selectCategoryByArticleId" parameterType="Long" resultType="Category">
+        select
+            c.id, c.name, a.id as article_id
+        from article a, category c, article_category ac
+        where a.id = ac.article_id and c.id = ac.category_id and a.id = #{id}
+    </select>
+
+    <!-- 根据文章id列表批量查询其关联分类表中的数据 -->
+    <select id="selectCategoryByArticleIds" parameterType="Long" resultType="Category">
+        select
+            c.id, c.name, a.id as article_id
+        from article a, category c, article_category ac
+        where a.id = ac.article_id and c.id = ac.category_id and a.id in
+        <foreach item="articleId" index="index" collection="articleIds" open="(" separator="," close=")">
+            #{articleId}
+        </foreach>
+    </select>
+    
 </mapper>

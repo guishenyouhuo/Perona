@@ -19,17 +19,17 @@ public class SpringContextUtils implements ApplicationContextAware {
 
     private static ApplicationContext context = null;
 
-    public static Object getBean(String beanId) {
-        return context.getBean(beanId);
+    @SuppressWarnings("unchecked")
+    public static <T> T getBean(String beanId) throws BeansException {
+        return (T) context.getBean(beanId);
     }
 
-    public static <T> T getBean(Class<T> clazz) {
+    public static <T> T getBean(Class<T> clazz) throws BeansException {
         return context.getBean(clazz);
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-            throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         logger.info("初始化 SpringContext");
         SpringContextUtils.context = applicationContext;
     }

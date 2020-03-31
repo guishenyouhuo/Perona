@@ -1,7 +1,8 @@
 package com.guigui.perona.controller;
 
 import com.guigui.perona.common.constants.CommonConstants;
-import com.guigui.perona.common.utils.DateUtil;
+import com.guigui.perona.common.exception.GlobalException;
+import com.guigui.perona.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * @Description: 图片上传
@@ -36,7 +38,7 @@ public class UploadController {
             request.setCharacterEncoding("utf-8");
             response.setHeader("Content-Type", "text/html");
 
-            String localDate = DateUtil.dateFormat(LocalDateTime.now(), DateUtil.LOCAL_YEAR_MONTH_DAY);
+            String localDate = DateUtils.dateFormat(LocalDateTime.now(), DateUtils.LOCAL_YEAR_MONTH_DAY);
             String rootPath = resources_path + "/" + CommonConstants.IMG_UPLOAD_PATH + "/" + localDate;
 
             /**
@@ -48,17 +50,27 @@ public class UploadController {
             }
 
             //最终文件名
-            File realFile = new File(rootPath + File.separator + attach.getOriginalFilename());
+            String originFileName = attach.getOriginalFilename();
+            if (originFileName == null || originFileName.length() == 0) {
+                throw new GlobalException("原始文件名为空！");
+            }
+            int index = originFileName.lastIndexOf(".");
+            if (index == -1) {
+                throw new GlobalException("原始文件扩展名异常！");
+            }
+            String randomName = UUID.randomUUID().toString().replace("-", "");
+            String newFileName = originFileName.substring(0, index) + randomName + originFileName.substring(index);
+            File realFile = new File(rootPath + File.separator + newFileName);
             FileUtils.copyInputStreamToFile(attach.getInputStream(), realFile);
 
             response.setCharacterEncoding("UTF-8");
-            String url = CommonConstants.IMG_UPLOAD_PATH + "/" + localDate + "/" + attach.getOriginalFilename();
+            String url = CommonConstants.IMG_UPLOAD_PATH + "/" + localDate + "/" + newFileName;
             //下面response返回的json格式是editor.md所限制的，规范输出就OK
             response.getWriter().write("{\"success\": 1, \"message\":\"上传成功\",\"url\":\"/" + url + "\"}");
         } catch (Exception e) {
             log.error("上传图片出现异常！imgName: {}", attach.getOriginalFilename(), e);
             try {
-                response.getWriter().write("{\"success\":0}");
+                response.getWriter().write("{\"success\":0, \"message\":\"" + e.getMessage() + "\"}");
             } catch (IOException e1) {
                 log.error("上传完成后返回到出现异常！imgName: {}", attach.getOriginalFilename(), e);
             }

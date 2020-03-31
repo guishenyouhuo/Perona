@@ -46,7 +46,7 @@
                             <div class="item-meta clearfix">
                                 <div class="item-meta-ico bg-ico-book" style="background: url(/site/images/bg-ico.png) no-repeat;background-size: 40px auto;"></div>
                                 <div class="item-meta-date">
-                                    <span th:text="${#temporals.format(a.publishTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                    <span th:text="${#dates.format(a.publishTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
                                 </div>
                             </div>
                         </div>

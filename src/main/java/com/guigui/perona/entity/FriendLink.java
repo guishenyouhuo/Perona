@@ -1,23 +1,20 @@
 package com.guigui.perona.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 /**
- * <p>
- * 友链表
- * </p>
+ * 友链对象 friend_link
  *
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-03-28
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class FriendLink implements Serializable {
 
@@ -26,20 +23,24 @@ public class FriendLink implements Serializable {
     /**
      * 编号
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
      * 连接名称
      */
-    @TableField("name")
     private String name;
 
     /**
      * 连接URL
      */
-    @TableField("url")
     private String url;
 
-
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("name", getName())
+                .append("url", getUrl())
+                .toString();
+    }
 }

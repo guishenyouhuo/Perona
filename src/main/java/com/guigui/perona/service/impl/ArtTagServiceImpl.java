@@ -1,84 +1,121 @@
 package com.guigui.perona.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.guigui.perona.common.utils.QueryPage;
-import com.guigui.perona.entity.ArtTag;
-import com.guigui.perona.mapper.ArtTagMapper;
-import com.guigui.perona.service.IArtTagService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.guigui.perona.service.IArticleTagService;
-import org.apache.commons.lang3.StringUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.guigui.perona.common.constants.UserConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import com.guigui.perona.mapper.ArtTagMapper;
+import com.guigui.perona.entity.ArtTag;
+import com.guigui.perona.service.IArtTagService;
+import com.guigui.perona.common.utils.text.Convert;
 
 /**
- * <p>
- * 标签表 服务实现类
- * </p>
+ * 标签Service业务层处理
  *
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-03-25
  */
 @Service
-public class ArtTagServiceImpl extends ServiceImpl<ArtTagMapper, ArtTag> implements IArtTagService {
+public class ArtTagServiceImpl implements IArtTagService {
 
     @Autowired
     private ArtTagMapper artTagMapper;
 
-    @Autowired
-    private IArticleTagService articleTagService;
-
+    /**
+     * 查询标签
+     *
+     * @param id 标签ID
+     * @return 标签
+     */
     @Override
-    public List<ArtTag> findAll() {
-        return artTagMapper.selectList(new QueryWrapper<>());
+    public ArtTag selectArtTagById(Long id) {
+        return artTagMapper.selectArtTagById(id);
+    }
+
+    /**
+     * 查询标签列表
+     *
+     * @param artTag 标签
+     * @return 标签
+     */
+    @Override
+    public List<ArtTag> selectArtTagList(ArtTag artTag) {
+        return artTagMapper.selectArtTagList(artTag);
+    }
+
+    /**
+     * 新增标签
+     *
+     * @param artTag 标签
+     * @return 结果
+     */
+    @Override
+    public int insertArtTag(ArtTag artTag) {
+        return artTagMapper.insertArtTag(artTag);
+    }
+
+    /**
+     * 修改标签
+     *
+     * @param artTag 标签
+     * @return 结果
+     */
+    @Override
+    public int updateArtTag(ArtTag artTag) {
+        return artTagMapper.updateArtTag(artTag);
+    }
+
+    /**
+     * 删除标签对象
+     *
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    @Override
+    public int deleteArtTagByIds(String ids) {
+        return artTagMapper.deleteArtTagByIds(Convert.toStrArray(ids));
+    }
+
+    /**
+     * 删除标签信息
+     *
+     * @param id 标签ID
+     * @return 结果
+     */
+    @Override
+    public int deleteArtTagById(Long id) {
+        return artTagMapper.deleteArtTagById(id);
     }
 
     @Override
-    public IPage<ArtTag> list(ArtTag tag, QueryPage queryPage) {
-        IPage<ArtTag> page = new Page<>(queryPage.getPage(), queryPage.getLimit());
-        LambdaQueryWrapper<ArtTag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.like(StringUtils.isNotBlank(tag.getName()), ArtTag::getName, tag.getName());
-        queryWrapper.orderByDesc(ArtTag::getId);
-        return artTagMapper.selectPage(page, queryWrapper);
+    public List<ArtTag> selectByArticleId(Long articleId) {
+        return artTagMapper.selectByArticleId(articleId);
     }
 
     @Override
-    @Transactional
-    public void add(ArtTag tag) {
-        if (!exists(tag)) {
-            artTagMapper.insert(tag);
+    public Map<Long, List<ArtTag>> selectByArticleIds(List<Long> articleIds) {
+        List<ArtTag> artTagList = artTagMapper.selectByArticleIds(articleIds);
+        Map<Long, List<ArtTag>> result = new HashMap<>(artTagList.size());
+        artTagList.forEach(artTag -> {
+            Long articleId = artTag.getArticleId();
+            List<ArtTag> group = result.computeIfAbsent(articleId, k -> new ArrayList<>());
+            group.add(artTag);
+        });
+        return result;
+    }
+
+    @Override
+    public String checkArtTagUnique(ArtTag artTag) {
+        long tagId = artTag.getId() == null ? -1L : artTag.getId();
+        ArtTag info = artTagMapper.selectTagByName(artTag.getName());
+        if (info != null && info.getId() != tagId) {
+            return UserConstants.NOT_UNIQUE;
         }
-    }
-
-    private boolean exists(ArtTag tag) {
-        LambdaQueryWrapper<ArtTag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ArtTag::getName, tag.getName());
-        return artTagMapper.selectList(queryWrapper).size() > 0;
-    }
-
-    @Override
-    @Transactional
-    public void update(ArtTag tag) {
-        artTagMapper.updateById(tag);
-    }
-
-    @Override
-    @Transactional
-    public void delete(Long id) {
-        artTagMapper.deleteById(id);
-        //删除该标签与文章有关联的关联信息
-        articleTagService.deleteByTagsId(id);
-    }
-
-    @Override
-    public List<ArtTag> findByArticleId(Long id) {
-        return artTagMapper.findByArticleId(id);
+        return UserConstants.UNIQUE;
     }
 
 }

@@ -1,63 +1,86 @@
 package com.guigui.perona.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.guigui.perona.common.utils.QueryPage;
 import com.guigui.perona.entity.ArtTag;
-import com.baomidou.mybatisplus.extension.service.IService;
-
 import java.util.List;
+import java.util.Map;
 
 /**
- * <p>
- * 标签表 服务类
- * </p>
- *
+ * 标签Service接口
+ * 
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-03-25
  */
-public interface IArtTagService extends IService<ArtTag> {
+public interface IArtTagService {
+    /**
+     * 查询标签
+     * 
+     * @param id 标签ID
+     * @return 标签
+     */
+    ArtTag selectArtTagById(Long id);
+
+    /**
+     * 查询标签列表
+     * 
+     * @param artTag 标签
+     * @return 标签集合
+     */
+    List<ArtTag> selectArtTagList(ArtTag artTag);
+
+    /**
+     * 新增标签
+     * 
+     * @param artTag 标签
+     * @return 结果
+     */
+    int insertArtTag(ArtTag artTag);
+
+    /**
+     * 修改标签
+     * 
+     * @param artTag 标签
+     * @return 结果
+     */
+    int updateArtTag(ArtTag artTag);
+
+    /**
+     * 批量删除标签
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    int deleteArtTagByIds(String ids);
+
+    /**
+     * 删除标签信息
+     * 
+     * @param id 标签ID
+     * @return 结果
+     */
+    int deleteArtTagById(Long id);
+
     /**
      * 根据文章ID查询其关联的标签数据
      *
-     * @param id
-     * @return
+     * @param articleId 文章id
+     * @return 结果
      */
-    List<ArtTag> findByArticleId(Long id);
+    List<ArtTag> selectByArticleId(Long articleId);
 
     /**
-     * 查询所有，为博客前台服务，查询并封装每个标签的文章数量
+     * 根据文章ID列表查询其关联的标签数据
      *
-     * @return
+     * @param articleIds 文章id列表
+     * @return 结果
      */
-    List<ArtTag> findAll();
+    Map<Long, List<ArtTag>> selectByArticleIds(List<Long> articleIds);
 
     /**
-     * 分页查询
+     * 校验标签名是否唯一
      *
-     * @param tag 查询条件
-     * @return
+     * @param artTag 标签信息
+     * @return 结果
      */
-    IPage<ArtTag> list(ArtTag tag, QueryPage queryPage);
-
-    /**
-     * 新增
-     *
-     * @param tag
-     */
-    void add(ArtTag tag);
-
-    /**
-     * 更新
-     *
-     * @param tag
-     */
-    void update(ArtTag tag);
-
-    /**
-     * 删除
-     *
-     * @param id
-     */
-    void delete(Long id);
+    String checkArtTagUnique(ArtTag artTag);
 
 }

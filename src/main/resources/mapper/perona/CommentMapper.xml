@@ -1,18 +1,148 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guigui.perona.mapper.CommentMapper">
-    <!-- 查询最新的8条评论，为博客前台服务 -->
-    <select id="findAll" resultType="Comment">
-        SELECT DISTINCT
-            c.content,
-            c.name,
-            c.article_id
-        FROM
-            article a,
-            comment c
-        WHERE
-            c.article_id IN ( SELECT id FROM article )
-            AND a.state = #{state}
-            LIMIT #{queryPage.page}, #{queryPage.limit}
+    <resultMap type="Comment" id="CommentResult">
+        <result property="id" column="id"/>
+        <result property="pId" column="p_id"/>
+        <result property="cId" column="c_id"/>
+        <result property="articleTitle" column="article_title"/>
+        <result property="articleId" column="article_id"/>
+        <result property="name" column="name"/>
+        <result property="cName" column="c_name"/>
+        <result property="time" column="time"/>
+        <result property="content" column="content"/>
+        <result property="email" column="email"/>
+        <result property="url" column="url"/>
+        <result property="sort" column="sort"/>
+        <result property="ip" column="ip"/>
+        <result property="device" column="device"/>
+        <result property="address" column="address"/>
+    </resultMap>
+
+    <sql id="commentFields">id, p_id, c_id, article_title, article_id, name, c_name, time, content, email, url, sort, ip, device, address</sql>
+
+    <select id="selectCommentList" parameterType="Comment" resultMap="CommentResult">
+        select
+        <include refid="commentFields"/>
+        from comment
+        <where>  
+            <if test="pId != null "> and p_id = #{pId}</if>
+            <if test="cId != null "> and c_id = #{cId}</if>
+            <if test="articleTitle != null  and articleTitle != ''"> and article_title = #{articleTitle}</if>
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="cName != null  and cName != ''"> and c_name like concat('%', #{cName}, '%')</if>
+            <if test="time != null "> and time = #{time}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="device != null  and device != ''"> and device = #{device}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+        </where>
     </select>
+    
+    <select id="selectCommentById" parameterType="Long" resultMap="CommentResult">
+        select
+        <include refid="commentFields"/>
+        from comment
+        where id = #{id}
+    </select>
+        
+    <insert id="insertComment" parameterType="Comment" useGeneratedKeys="true" keyProperty="id">
+        insert into comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pId != null ">p_id,</if>
+            <if test="cId != null ">c_id,</if>
+            <if test="articleTitle != null  and articleTitle != ''">article_title,</if>
+            <if test="articleId != null ">article_id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="cName != null  and cName != ''">c_name,</if>
+            <if test="time != null ">time,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="email != null  and email != ''">email,</if>
+            <if test="url != null  and url != ''">url,</if>
+            <if test="sort != null ">sort,</if>
+            <if test="ip != null  and ip != ''">ip,</if>
+            <if test="device != null  and device != ''">device,</if>
+            <if test="address != null  and address != ''">address,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pId != null ">#{pId},</if>
+            <if test="cId != null ">#{cId},</if>
+            <if test="articleTitle != null  and articleTitle != ''">#{articleTitle},</if>
+            <if test="articleId != null ">#{articleId},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="cName != null  and cName != ''">#{cName},</if>
+            <if test="time != null ">#{time},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="email != null  and email != ''">#{email},</if>
+            <if test="url != null  and url != ''">#{url},</if>
+            <if test="sort != null ">#{sort},</if>
+            <if test="ip != null  and ip != ''">#{ip},</if>
+            <if test="device != null  and device != ''">#{device},</if>
+            <if test="address != null  and address != ''">#{address},</if>
+         </trim>
+    </insert>
+
+    <update id="updateComment" parameterType="Comment">
+        update comment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pId != null ">p_id = #{pId},</if>
+            <if test="cId != null ">c_id = #{cId},</if>
+            <if test="articleTitle != null  and articleTitle != ''">article_title = #{articleTitle},</if>
+            <if test="articleId != null ">article_id = #{articleId},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="cName != null  and cName != ''">c_name = #{cName},</if>
+            <if test="time != null ">time = #{time},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="email != null  and email != ''">email = #{email},</if>
+            <if test="url != null  and url != ''">url = #{url},</if>
+            <if test="sort != null ">sort = #{sort},</if>
+            <if test="ip != null  and ip != ''">ip = #{ip},</if>
+            <if test="device != null  and device != ''">device = #{device},</if>
+            <if test="address != null  and address != ''">address = #{address},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCommentById" parameterType="Long">
+        delete from comment where id = #{id}
+    </delete>
+
+    <delete id="deleteCommentByIds" parameterType="String">
+        delete from comment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 查询最新的8条评论，为博客前台服务 -->
+    <select id="selectRecentComments" resultType="Comment">
+        select c.content, c.name, c.article_id
+        from comment c, article a
+        where c.article_id = a.id and a.state = #{state}
+        order by c.id desc
+        limit #{recentNum}
+    </select>
+
+    <select id="selectCommentsByPid" parameterType="Long" resultMap="CommentResult">
+        select
+        <include refid="commentFields"/>
+        from comment
+        where p_id = #{pId}
+    </select>
+
+    <select id="selectCommentsByPidList" parameterType="Long" resultMap="CommentResult">
+        select
+        <include refid="commentFields"/>
+        from comment
+        where p_id in
+        <foreach item="pId" index="index" collection="pIdList" open="(" separator="," close=")">
+            #{pId}
+        </foreach>
+        order by id
+    </select>
+    
 </mapper>

@@ -1,23 +1,83 @@
 package com.guigui.perona.mapper;
 
-import com.guigui.perona.entity.ArtTag;
-import com.guigui.perona.entity.Article;
 import com.guigui.perona.entity.ArticleTag;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
 
 /**
- * <p>
- * 文章&&标签关联表 Mapper 接口
- * </p>
+ * 文章&&标签关联Mapper接口
  *
  * @author guigui
- * @since 2019-10-24
+ * @date 2020-03-26
  */
-public interface ArticleTagMapper extends BaseMapper<ArticleTag> {
+public interface ArticleTagMapper {
+    /**
+     * 根据主键查询文章&&标签关联
+     *
+     * @param id 文章&&标签关联ID
+     * @return 文章&&标签关联
+     */
+    ArticleTag selectArticleTagById(Long id);
 
-    List<ArtTag> findByArticleId(long articleId);
+    /**
+     * 查询文章&&标签关联列表
+     *
+     * @param articleTag 文章&&标签关联
+     * @return 文章&&标签关联集合
+     */
+    List<ArticleTag> selectArticleTagList(ArticleTag articleTag);
 
-    List<Article> findByTagName(String name);
+    /**
+     * 新增文章&&标签关联
+     *
+     * @param articleTag 文章&&标签关联
+     * @return 结果
+     */
+    int insertArticleTag(ArticleTag articleTag);
+
+    /**
+     * 修改文章&&标签关联
+     *
+     * @param articleTag 文章&&标签关联
+     * @return 结果
+     */
+    int updateArticleTag(ArticleTag articleTag);
+
+    /**
+     * 删除文章&&标签关联
+     *
+     * @param id 文章&&标签关联ID
+     * @return 结果
+     */
+    int deleteArticleTagById(Long id);
+
+    /**
+     * 批量删除文章&&标签关联
+     *
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    int deleteArticleTagByIds(String[] ids);
+
+    /**
+     * 根据文章id删除映射关系
+     *
+     * @param articleId 文章id
+     */
+    void deleteByArticleId(Long articleId);
+
+    /**
+     * 根据标签id删除映射关系
+     *
+     * @param tagId 标签id
+     */
+    void deleteByTagId(Long tagId);
+
+    /**
+     * 批量插入文章标签映射
+     *
+     * @param articleTagList 映射列表
+     * @return 结果
+     */
+    int batchInsert(List<ArticleTag> articleTagList);
 }

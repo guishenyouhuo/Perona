@@ -1,78 +1,110 @@
 package com.guigui.perona.controller;
 
+import java.util.List;
 
-import com.guigui.perona.common.annotation.Log;
-import com.guigui.perona.common.exception.GlobalException;
-import com.guigui.perona.common.utils.QueryPage;
-import com.guigui.perona.common.utils.Return;
+import com.guigui.perona.common.constants.UserConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import com.guigui.perona.entity.FriendLink;
 import com.guigui.perona.service.IFriendLinkService;
-import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import com.guigui.perona.common.BaseController;
+import com.guigui.perona.manage.web.domain.AjaxResult;
+import com.guigui.perona.manage.web.page.TableDataInfo;
 
 /**
- * <p>
- * 友链表 前端控制器
- * </p>
- *
+ * 友链Controller
+ * 
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-03-28
  */
-@Slf4j
-@RestController
-@RequestMapping("/api/link")
-@Api(value = "LinkController", tags = {"友链管理接口"})
+@Controller
+@RequestMapping("/manage/friend")
 public class FriendLinkController extends BaseController {
+    private String prefix = "manage/blog/friend";
+
     @Autowired
-    private IFriendLinkService linkService;
+    private IFriendLinkService friendLinkService;
 
-    @GetMapping("/list")
-    public Return list(FriendLink link, QueryPage queryPage) {
-        return new Return<>(super.getData(linkService.list(link, queryPage)));
+    @GetMapping()
+    public String friend() {
+        return prefix + "/friend";
     }
 
-    @GetMapping("/{id}")
-    public Return findById(@PathVariable Long id) {
-        return new Return<>(linkService.getById(id));
+    /**
+     * 查询友链列表
+     */
+    @PostMapping("/list")
+    @ResponseBody
+    public TableDataInfo list(FriendLink friendLink) {
+        startPage();
+        List<FriendLink> list = friendLinkService.selectFriendLinkList(friendLink);
+        return getDataTable(list);
     }
 
-    @PostMapping
-    @Log("新增友链")
-    public Return save(@RequestBody FriendLink link) {
-        try {
-            linkService.add(link);
-            return new Return();
-        } catch (Exception e) {
-            log.error("新增友链出现异常！link: {}", link.getName(), e);
-            throw new GlobalException(e.getMessage());
+    /**
+     * 新增友链
+     */
+    @GetMapping("/add")
+    public String addView() {
+        return prefix + "/add";
+    }
+
+    /**
+     * 新增保存友链
+     */
+    @PostMapping("/add")
+    @ResponseBody
+    public AjaxResult addSave(FriendLink friendLink) {
+        if (UserConstants.NOT_UNIQUE.equals(friendLinkService.checkFriendLinkUnique(friendLink))) {
+            return error("新增友链'" + friendLink.getName() + "'失败，友链名称已存在");
         }
+        return toAjax(friendLinkService.insertFriendLink(friendLink));
     }
 
-    @PutMapping
-    @Log("更新友链")
-    public Return update(@RequestBody FriendLink link) {
-        try {
-            linkService.update(link);
-            return new Return();
-        } catch (Exception e) {
-            log.error("更新友链出现异常！link: {}", link.getName(), e);
-            throw new GlobalException(e.getMessage());
-        }
+    /**
+     * 修改友链
+     */
+    @GetMapping("/edit/{id}")
+    public String editView(@PathVariable("id") Long id, ModelMap mmap) {
+        FriendLink friendLink = friendLinkService.selectFriendLinkById(id);
+        mmap.put("friendLink", friendLink);
+        return prefix + "/edit";
     }
 
-    @DeleteMapping("/{id}")
-    @Log("删除友链")
-    public Return delete(@PathVariable Long id) {
-        try {
-            linkService.delete(id);
-            return new Return();
-        } catch (Exception e) {
-            log.error("删除友链出现异常！linkId: {}", id, e);
-            throw new GlobalException(e.getMessage());
+    /**
+     * 修改保存友链
+     */
+    @PostMapping("/edit")
+    @ResponseBody
+    public AjaxResult editSave(FriendLink friendLink) {
+        if (UserConstants.NOT_UNIQUE.equals(friendLinkService.checkFriendLinkUnique(friendLink))) {
+            return error("修改友链'" + friendLink.getName() + "'失败，友链名称已存在");
         }
+        return toAjax(friendLinkService.updateFriendLink(friendLink));
     }
+
+    /**
+     * 删除友链
+     */
+    @PostMapping( "/remove")
+    @ResponseBody
+    public AjaxResult remove(String ids) {
+        return toAjax(friendLinkService.deleteFriendLinkByIds(ids));
+    }
+
+    /**
+     * 校验友链名称
+     */
+    @PostMapping("/checkLinkUnique")
+    @ResponseBody
+    public String checkLinkUnique(FriendLink friendLink) {
+        return friendLinkService.checkFriendLinkUnique(friendLink);
+    }
+
 }

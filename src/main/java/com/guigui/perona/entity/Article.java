@@ -1,29 +1,23 @@
 package com.guigui.perona.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-
-import java.time.LocalDateTime;
-
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
- * 文章表
- * </p>
+ * 文章对象 article
  *
  * @author guigui
- * @since 2019-10-24
+ * @date 2020-03-25
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class Article implements Serializable {
 
@@ -32,91 +26,98 @@ public class Article implements Serializable {
     /**
      * 编号
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
      * 标题
      */
-    @TableField("title")
     private String title;
 
     /**
      * 封面图片
      */
-    @TableField("cover")
     private String cover;
 
     /**
      * 作者
      */
-    @TableField("author")
     private String author;
 
     /**
      * 内容
      */
-    @TableField("content")
     private String content;
 
     /**
      * 内容-Markdown
      */
-    @TableField("content_md")
     private String contentMd;
 
     /**
      * 分类
      */
-    @TableField("category")
     private String category;
 
     /**
      * 来源
      */
-    @TableField("origin")
     private String origin;
 
     /**
      * 状态
      */
-    @TableField("state")
     private String state;
 
     /**
      * 发布时间
      */
-    @TableField("publish_time")
-    private LocalDateTime publishTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date publishTime;
 
     /**
      * 上次修改时间
      */
-    @TableField("edit_time")
-    private LocalDateTime editTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date editTime;
 
     /**
      * 创建时间
      */
-    @TableField("create_time")
-    private LocalDateTime createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
     /**
      * 类型， 0原创 1转载
      */
-    @TableField("type")
-    private Integer type;
+    private Long type;
 
-    @TableField(exist = false)
     private List<ArtTag> artTags;
 
-    @TableField(exist = false)
     private List<String> tagNames;
+
+    private String[] tagIds;
 
     /**
      * 分类名称
      */
-    @TableField(exist = false)
     private String categoryName;
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("title", getTitle())
+                .append("cover", getCover())
+                .append("author", getAuthor())
+                .append("content", getContent())
+                .append("contentMd", getContentMd())
+                .append("category", getCategory())
+                .append("origin", getOrigin())
+                .append("state", getState())
+                .append("publishTime", getPublishTime())
+                .append("editTime", getEditTime())
+                .append("createTime", getCreateTime())
+                .append("type", getType())
+                .toString();
+    }
 }

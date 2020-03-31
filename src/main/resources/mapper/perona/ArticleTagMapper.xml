@@ -1,23 +1,76 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guigui.perona.mapper.ArticleTagMapper">
-    <!-- 根据文章ID查询其关联的标签信息 -->
-    <select id="findByArticleId" resultType="ArtTag">
-        SELECT t.name
-        FROM article_tag at,
-             art_tag t
-        WHERE at.article_id = #{articleId}
-          AND t.id = at.tag_id;
-    </select>
+    <resultMap type="ArticleTag" id="ArticleTagResult">
+        <result property="id" column="id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="tagId" column="tag_id"/>
+    </resultMap>
 
-    <!-- 根据标签名称查询关联的文章数据 -->
-    <select id="findByTagName" resultType="Article">
-        SELECT a.id, a.sysCategory, a.publish_time, a.title, a.views
-        FROM article a,
-             category c,
-             article_category ac
-        WHERE c.name = #{name}
-          AND c.id = ac.category_id
-          AND a.id = ac.article_id;
+    <sql id="articleTagFields">id, article_id, tag_id</sql>
+
+    <select id="selectArticleTagList" parameterType="ArticleTag" resultMap="ArticleTagResult">
+        select
+        <include refid="articleTagFields"/>
+        from article_tag
+        <where>  
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="tagId != null "> and tag_id = #{tagId}</if>
+        </where>
     </select>
+    
+    <select id="selectArticleTagById" parameterType="Long" resultMap="ArticleTagResult">
+        select
+        <include refid="articleTagFields"/>
+        from article_tag
+        where id = #{id}
+    </select>
+        
+    <insert id="insertArticleTag" parameterType="ArticleTag" useGeneratedKeys="true" keyProperty="id">
+        insert into article_tag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null ">article_id,</if>
+            <if test="tagId != null ">tag_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null ">#{articleId},</if>
+            <if test="tagId != null ">#{tagId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateArticleTag" parameterType="ArticleTag">
+        update article_tag
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null ">article_id = #{articleId},</if>
+            <if test="tagId != null ">tag_id = #{tagId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteArticleTagById" parameterType="Long">
+        delete from article_tag where id = #{id}
+    </delete>
+
+    <delete id="deleteArticleTagByIds" parameterType="String">
+        delete from article_tag where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByArticleId" parameterType="Long">
+        delete from article_tag where article_id = #{articleId}
+    </delete>
+
+    <delete id="deleteByTagId" parameterType="Long">
+        delete from article_tag where tag_id = #{tagId}
+    </delete>
+
+    <insert id="batchInsert">
+        insert into article_tag(article_id, tag_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.articleId},#{item.tagId})
+        </foreach>
+    </insert>
+
 </mapper>

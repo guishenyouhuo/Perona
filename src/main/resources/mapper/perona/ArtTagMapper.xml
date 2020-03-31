@@ -1,8 +1,81 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guigui.perona.mapper.ArtTagMapper">
-    <select id="findByArticleId" parameterType="long" resultType="ArtTag">
-        SELECT * FROM art_tag t, article a, article_tag ta
-        WHERE t.id = ta.tag_id AND a.id = ta.article_id AND a.id = #{id}
+    <resultMap type="ArtTag" id="ArtTagResult">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="articleId" column="article_id"/>
+    </resultMap>
+
+    <sql id="artTagFields">id, name</sql>
+
+    <select id="selectArtTagList" parameterType="ArtTag" resultMap="ArtTagResult">
+        select
+        <include refid="artTagFields"/>
+        from art_tag
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
     </select>
+    
+    <select id="selectArtTagById" parameterType="Long" resultMap="ArtTagResult">
+        select
+        <include refid="artTagFields"/>
+        from art_tag
+        where id = #{id}
+    </select>
+
+    <select id="selectTagByName" parameterType="String" resultMap="ArtTagResult">
+        select
+        <include refid="artTagFields"/>
+        from art_tag
+        where name = #{namme}
+    </select>
+        
+    <insert id="insertArtTag" parameterType="ArtTag" useGeneratedKeys="true" keyProperty="id">
+        insert into art_tag
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null  and name != ''">#{name},</if>
+         </trim>
+    </insert>
+
+    <update id="updateArtTag" parameterType="ArtTag">
+        update art_tag
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteArtTagById" parameterType="Long">
+        delete from art_tag where id = #{id}
+    </delete>
+
+    <delete id="deleteArtTagByIds" parameterType="String">
+        delete from art_tag where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByArticleId" parameterType="Long" resultType="ArtTag">
+        select
+        t.id, t.name, ta.article_id as article_id
+        from art_tag t, article_tag ta
+        where t.id = ta.tag_id and ta.article_id = #{id}
+    </select>
+
+    <select id="selectByArticleIds" parameterType="Long" resultType="ArtTag">
+        select
+        t.id, t.name, ta.article_id as article_id
+        from art_tag t, article_tag ta
+        where t.id = ta.tag_id and ta.article_id in
+        <foreach item="articleId" index="index" collection="articleIds" open="(" separator="," close=")">
+            #{articleId}
+        </foreach>
+    </select>
+    
 </mapper>

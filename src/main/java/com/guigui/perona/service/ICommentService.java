@@ -1,74 +1,82 @@
 package com.guigui.perona.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.guigui.perona.common.utils.QueryPage;
 import com.guigui.perona.entity.Comment;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
- * 评论表 服务类
- * </p>
+ * 评论Service接口
  *
  * @author guigui
- * @since 2019-10-24
+ * @date 2020-03-26
  */
-public interface ICommentService extends IService<Comment> {
+public interface ICommentService {
+    /**
+     * 查询评论
+     *
+     * @param id 评论ID
+     * @return 评论
+     */
+    Comment selectCommentById(Long id);
 
     /**
-     * 查询所有评论
+     * 查询评论列表
      *
-     * @return
+     * @param comment 评论
+     * @return 评论集合
      */
-    List<Comment> findAll();
+    List<Comment> selectCommentList(Comment comment);
 
     /**
-     * 分页查询并过滤留言数据
+     * 新增评论
      *
-     * @param articleId 当前访问的文章ID
-     * @param sort      分类，规定：sort=0表示文章详情页的评论信息；sort=1表示友链页的评论信息；sort=2表示关于我页的评论信息
-     * @return
+     * @param comment 评论
+     * @return 结果
      */
-    Map<String, Object> findCommentsList(QueryPage queryPage, String articleId, int sort);
+    int insertComment(Comment comment);
 
     /**
-     * 分页查询
+     * 修改评论
      *
-     * @param comment
-     * @param queryPage
-     * @return
+     * @param comment 评论
+     * @return 结果
      */
-    IPage<Comment> list(Comment comment, QueryPage queryPage);
+    int updateComment(Comment comment);
 
     /**
-     * 查询指定文章下的评论量
+     * 批量删除评论
      *
-     * @param articleId
-     * @return
+     * @param ids 需要删除的数据ID
+     * @return 结果
      */
-    int findCountByArticle(Long articleId);
+    int deleteCommentByIds(String ids);
 
     /**
-     * 新增
+     * 删除评论信息
      *
-     * @param comment
+     * @param id 评论ID
+     * @return 结果
      */
-    void add(Comment comment);
+    int deleteCommentById(Long id);
 
     /**
-     * 更新
+     * 查询最近文章评论
      *
-     * @param comment
+     * @param state     文章状态
+     * @param recentNum 最近数
+     * @return 评论列表
      */
-    void update(Comment comment);
+    List<Comment> selectRecentComments(String state, int recentNum);
 
     /**
-     * 删除
+     * 根据页面查找对应评论树
      *
-     * @param id
+     * @param page      当前页
+     * @param sort      页面标识
+     * @param articleId 文章id
+     * @return 结果
      */
-    void delete(Long id);
+    Map<String, Object> getCommentsBySort(int page, int sort, String articleId);
+
 }

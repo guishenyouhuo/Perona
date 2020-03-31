@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guigui.perona.common.annotation.Log;
-import com.guigui.perona.common.utils.AddressUtil;
+import com.guigui.perona.common.utils.AddressUtils;
 import com.guigui.perona.common.utils.QueryPage;
 import com.guigui.perona.entity.OperateLog;
 import com.guigui.perona.mapper.OperateLogMapper;
@@ -87,7 +87,7 @@ public class OperateLogServiceImpl extends ServiceImpl<OperateLogMapper, Operate
             }
         }
         log.setCreateTime(LocalDateTime.now());
-        log.setLocation(AddressUtil.getAddress(log.getIp()));
+        log.setLocation(AddressUtils.getAddress(log.getIp()));
         this.save(log);
     }
 

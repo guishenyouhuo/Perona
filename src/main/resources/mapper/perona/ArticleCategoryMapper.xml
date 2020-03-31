@@ -1,5 +1,69 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guigui.perona.mapper.ArticleCategoryMapper">
+    <resultMap type="ArticleCategory" id="ArticleCategoryResult">
+        <result property="id" column="id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="categoryId" column="category_id"/>
+    </resultMap>
 
+    <sql id="articleCategoryFields">id, article_id, category_id</sql>
+
+    <select id="selectArticleCategoryList" parameterType="ArticleCategory" resultMap="ArticleCategoryResult">
+        select
+        <include refid="articleCategoryFields"/>
+        from article_category
+        <where>  
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="categoryId != null "> and category_id = #{categoryId}</if>
+        </where>
+    </select>
+    
+    <select id="selectArticleCategoryById" parameterType="Long" resultMap="ArticleCategoryResult">
+        select
+        <include refid="articleCategoryFields"/>
+        from article_category
+        where id = #{id}
+    </select>
+        
+    <insert id="insertArticleCategory" parameterType="ArticleCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into article_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null ">article_id,</if>
+            <if test="categoryId != null ">category_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null ">#{articleId},</if>
+            <if test="categoryId != null ">#{categoryId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateArticleCategory" parameterType="ArticleCategory">
+        update article_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="articleId != null ">article_id = #{articleId},</if>
+            <if test="categoryId != null ">category_id = #{categoryId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteArticleCategoryById" parameterType="Long">
+        delete from article_category where id = #{id}
+    </delete>
+
+    <delete id="deleteArticleCategoryByIds" parameterType="String">
+        delete from article_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByArticleId" parameterType="Long">
+        delete from article_category where article_id = #{articleId}
+    </delete>
+
+    <delete id="deleteByCategoryId" parameterType="Long">
+        delete from article_category where category_id = #{categoryId}
+    </delete>
+    
 </mapper>

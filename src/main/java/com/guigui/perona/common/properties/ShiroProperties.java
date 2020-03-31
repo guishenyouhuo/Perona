@@ -9,7 +9,6 @@ import lombok.Data;
  */
 @Data
 public class ShiroProperties {
-
     private long sessionTimeout;
     private int cookieTimeout;
     private String anonUrl;
@@ -18,4 +17,6 @@ public class ShiroProperties {
     private String logoutUrl;
     private int hashTimes;
     private String hashAlgorithm;
+    private boolean captchaEnabled;
+    private String captchaType;
 }

@@ -1,0 +1,106 @@
+# Spring配置
+spring:
+  profiles:
+    active: dev
+  thymeleaf:
+    mode: HTML
+    encoding: utf-8
+    cache: false
+  # 配置静态资源路径
+  # /**表示访问时直接用【/relative_path】即可
+  resources:
+    static-locations: classpath:/META-INF/resources/,classpath:/resources/,
+      classpath:/static/,classpath:/public/,file:${app.resources_path}
+  mvc:
+    static-path-pattern: /**
+  # 资源信息
+  messages:
+    # 国际化资源文件路径
+    basename: static/i18n/messages
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  # 文件上传
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size:  10MB
+      # 设置总上传的文件大小
+      max-request-size:  20MB
+  # 服务模块
+  devtools:
+    restart:
+      # 热部署开关
+      enabled: true
+
+# 服务端相关配置
+server:
+  port: 80
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # tomcat最大线程数，默认为200
+    max-threads: 800
+    # Tomcat启动初始化的线程数，默认值25
+    min-spare-threads: 30
+
+# mybatis相关配置
+mybatis-plus:
+  configuration:
+    jdbc-type-for-null: null
+  mapper-locations: classpath:mapper/perona/*.xml
+  global-config:
+    banner: false
+  type-aliases-package: com.guigui.perona.entity.**
+
+# PageHelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+# 系统配置
+perona:
+  # 代码生成相关配置
+  gen:
+    autoRemovePre: false
+    tablePrefix:
+    author: guigui
+    moduleName: manage
+    packageName: com.guigui.perona
+  # shiro相关配置
+  shiro:
+    logout_url: /logout
+    login_url: /manage/login
+    captcha_enabled: true
+    hash_times: 23
+    cookie_timeout: 86400
+    anon_url: /site/**,/error/**,/,/article/**,/category/**,/archives/**,/links/**,/about/**,/page/**,
+      /admin/js/**,/admin/layui/**,/admin/page/css/**,/admin/page/lay/**,/admin/lib/**,
+      /manage/img/**,/manage/css/**,/manage/fonts/**,/manage/ajax/**,/manage/js/**,/manage/perona/**,
+      /uploadImg/**,/weChat/**,/manage/captcha/captchaImage**,
+      /api/comment/**
+    hash_algorithm: MD5
+    captcha_type: math
+    session_timeout: 3600
+    success_url: /manage
+  # 项目相关配置
+  project:
+    # 名称
+    name: Perona
+    # 版本
+    version: 0.0.1
+    # 版权年份
+    copyrightYear: 2020
+    # 实例演示开关
+    demoEnabled: true
+    # 文件路径 示例 /data/static/perona/resources_path/uploadPath
+    profile: /data/static/perona/resources_path/uploadPath
+    # 获取ip地址开关
+    addressEnabled: true
+    # 密码重试次数
+    passwordRetries: 5

@@ -3,7 +3,7 @@ package com.guigui.perona.common.aspect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.guigui.perona.common.exception.GlobalException;
 import com.guigui.perona.common.utils.HttpContextUtil;
-import com.guigui.perona.common.utils.IPUtil;
+import com.guigui.perona.common.utils.IPUtils;
 import com.guigui.perona.entity.OperateLog;
 import com.guigui.perona.entity.UserInfo;
 import com.guigui.perona.service.IOperateLogService;
@@ -48,7 +48,7 @@ public class LogAspect {
             //获取Request请求
             HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
             //设置IP地址
-            String ip = IPUtil.getIpAddr(request);
+            String ip = IPUtils.getIpAddr(request);
             //记录时间（毫秒）
             long time = System.currentTimeMillis() - beginTime;
             //保存日志

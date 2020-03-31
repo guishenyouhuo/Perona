@@ -1,105 +1,162 @@
 package com.guigui.perona.controller;
 
-
-import com.guigui.perona.common.annotation.Log;
-import com.guigui.perona.common.exception.GlobalException;
-import com.guigui.perona.common.utils.Return;
-import com.guigui.perona.entity.LoginLog;
-import com.guigui.perona.entity.UserInfo;
-import com.guigui.perona.service.IArticleService;
-import com.guigui.perona.service.ICommentService;
-import com.guigui.perona.service.ILoginLogService;
-import com.guigui.perona.service.IUserInfoService;
-import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.guigui.perona.common.BaseController;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+
+import com.guigui.perona.common.constants.UserConstants;
+import com.guigui.perona.common.utils.ShiroUtils;
+import com.guigui.perona.entity.RoleInfo;
+import com.guigui.perona.service.IRoleInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import com.guigui.perona.entity.UserInfo;
+import com.guigui.perona.service.IUserInfoService;
+import com.guigui.perona.common.BaseController;
+import com.guigui.perona.manage.web.domain.AjaxResult;
+import com.guigui.perona.manage.web.page.TableDataInfo;
 
 /**
- * <p>
- * 用户表 前端控制器
- * </p>
+ * 用户Controller
  *
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-03-13
  */
-@RestController
-@RequestMapping("/api/user")
-@Api(value = "UserInfoController", tags = {"用户管理接口"})
+@Controller
+@RequestMapping("/manage/user")
 public class UserInfoController extends BaseController {
-
-    @Autowired
-    private IArticleService articleService;
-
-    @Autowired
-    private ICommentService commentService;
-
-    @Autowired
-    private ILoginLogService loginLogService;
+    private String prefix = "manage/user";
 
     @Autowired
     private IUserInfoService userInfoService;
 
-    @GetMapping("/info")
-    public Return getInfo() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("articleCount", articleService.count());
-        map.put("commentCount", commentService.count());
-        map.put("todayIp", 12);
-        List<LoginLog> log = loginLogService.list();
-        if (log == null || log.size() == 0) {
-            map.put("lastLoginTime", null);
-        } else {
-            map.put("lastLoginTime", log.get(log.size() - 1).getCreateTime());
+    @Autowired
+    private IRoleInfoService roleInfoService;
+
+    @GetMapping()
+    public String user() {
+        return prefix + "/user";
+    }
+
+    /**
+     * 查询用户列表
+     */
+    @PostMapping("/list")
+    @ResponseBody
+    public TableDataInfo list(UserInfo userInfo) {
+        startPage();
+        List<UserInfo> list = userInfoService.selectUserInfoList(userInfo);
+        return getDataTable(list);
+    }
+
+    /**
+     * 新增用户
+     */
+    @GetMapping("/add")
+    public String addView(ModelMap mmap) {
+        mmap.put("roles", roleInfoService.selectRoleInfoList(new RoleInfo()));
+        return prefix + "/add";
+    }
+
+    /**
+     * 新增保存用户
+     */
+    @PostMapping("/add")
+    @ResponseBody
+    public AjaxResult addSave(UserInfo userInfo) {
+        if (UserConstants.USER_NOT_UNIQUE.equals(userInfoService.checkUserUnique(userInfo))) {
+            return error("新增用户'" + userInfo.getUsername() + "'失败，该用户已存在!");
         }
-        map.put("token", this.getSession().getId());
-        map.put("user", this.getCurrentUser());
-        return new Return<>(map);
+        return toAjax(userInfoService.insertUserInfo(userInfo));
     }
 
-    @GetMapping("/{id}")
-    public Return findById(@PathVariable Long id) {
-        return new Return<>(userInfoService.getById(id));
+    /**
+     * 修改用户
+     */
+    @GetMapping("/edit/{id}")
+    public String editView(@PathVariable("id") Long id, ModelMap mmap) {
+        UserInfo userInfo = userInfoService.selectUserInfoById(id);
+        List<RoleInfo> roleInfoList = roleInfoService.selectRoleInfoList(new RoleInfo());
+        Set<String> roleSetByUser = roleInfoService.selectRoleKeysByUserId(id);
+        for (RoleInfo roleInfo : roleInfoList) {
+            if (roleSetByUser.contains(roleInfo.getRoleKey())) {
+                roleInfo.setFlag(true);
+            }
+        }
+        mmap.put("roles", roleInfoList);
+        mmap.put("user", userInfo);
+        return prefix + "/edit";
     }
 
-    @PostMapping
-    @Log("新增用户")
-    public Return save(@RequestBody UserInfo userInfo) {
+    /**
+     * 修改保存用户
+     */
+    @PostMapping("/edit")
+    @ResponseBody
+    public AjaxResult editSave(UserInfo userInfo) {
+        if (UserConstants.USER_NOT_UNIQUE.equals(userInfoService.checkUserUnique(userInfo))) {
+            return error("修改用户信息'" + userInfo.getUsername() + "'失败，该用户已存在!");
+        }
+        return toAjax(userInfoService.updateUserInfo(userInfo));
+    }
+
+    /**
+     * 删除用户
+     */
+    @PostMapping("/remove")
+    @ResponseBody
+    public AjaxResult remove(String ids) {
         try {
-            userInfoService.add(userInfo);
-            return new Return();
+            return toAjax(userInfoService.deleteUserInfoByIds(ids));
         } catch (Exception e) {
-            throw new GlobalException(e.getMessage());
+            return error(e.getMessage());
         }
     }
 
-    @PutMapping
-    @Log("更新用户")
-    public Return update(@RequestBody UserInfo userInfo) {
-        try {
-            userInfo.setId(this.getCurrentUser().getId());
-            userInfoService.update(userInfo);
-            return new Return();
-        } catch (Exception e) {
-            throw new GlobalException(e.getMessage());
-        }
+    /**
+     * 校验用户名
+     */
+    @PostMapping("/checkUserUnique")
+    @ResponseBody
+    public String checkUserUnique(UserInfo userInfo) {
+        return userInfoService.checkUserUnique(userInfo);
     }
 
-    @DeleteMapping("/{id}")
-    @Log("删除用户")
-    public Return delete(@PathVariable Long id) {
-        try {
-            userInfoService.delete(id);
-            return new Return();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new GlobalException(e.getMessage());
+    /**
+     * 重置密码
+     */
+    @GetMapping("/resetPwd/{userId}")
+    public String resetPwdView(@PathVariable("userId") Long userId, ModelMap mmap) {
+        mmap.put("user", userInfoService.selectUserInfoById(userId));
+        return prefix + "/resetPwd";
+    }
+
+    @PostMapping("/resetPwd")
+    @ResponseBody
+    public AjaxResult resetPwdSave(UserInfo userInfo) {
+        userInfoService.checkUserAllowed(userInfo);
+        if (userInfoService.resetUserPwd(userInfo) > 0) {
+            if (ShiroUtils.getUserId().equals(userInfo.getId())) {
+                setUserInfo(userInfoService.selectUserInfoById(userInfo.getId()));
+            }
+            return success();
         }
+        return error();
+    }
+
+    /**
+     * 用户状态修改
+     */
+    @PostMapping("/changeStatus")
+    @ResponseBody
+    public AjaxResult changeUserStatus(UserInfo userInfo) {
+        userInfoService.checkUserAllowed(userInfo);
+        return toAjax(userInfoService.changeStatus(userInfo));
     }
 
 }
