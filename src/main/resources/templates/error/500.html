@@ -2,35 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Perona</title>
+    <title>Perona - 500</title>
     <link rel="shortcut icon" th:href="@{/site/images/favicon.png}">
+    <link th:href="@{/manage/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/manage/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/manage/css/style.css}" rel="stylesheet"/>
     <style>
         body{
             margin:0;padding:0;
             font-family: PingFang SC,Microsoft YaHei,WenQuanYi Micro Hei,sans-serif;
         }
-        a, button.submit {
-            color:#6E7173;
-            text-decoration:none;
-            -webkit-transition:all .1s ease-in;
-            -moz-transition:all .1s ease-in;
-            -o-transition:all .1s ease-in;
-            transition:all .1s ease-in;
-        }
         a:hover, a:active {
             color:#6E7173;
         }
-        .body404{
-            position: absolute;
-            height: 100%;
-            width: 100%;
-            background:#fff;
-            background-size: auto 100%;
-        }
-        .body-about .body404{
-            background:#fff;
-        }
-        .site-name404 {
+        .site-name500 {
             margin: 0 auto;
             text-align: center;
             letter-spacing: 2px;
@@ -43,67 +28,17 @@
             -webkit-text-fill-color: transparent;
             -webkit-animation: hue 60s infinite linear;
         }
-        .site-name404 h1{
+        .site-name500 h1{
             margin: 0 0 10px;
             font-size:50px;
             line-height:1.2;
         }
-        .title404 span{
-            font-size: 15px;
-            width: 2px;
-        }
-        .title404 p{
-            font-size: 20px;
-            line-height:1.5;
-            margin:0;
-            color:#7b8993;
-        }
-        .info404{
+        .info500{
             position: absolute;
             top: 50%;
             text-align: center;
             width: 100%;
             margin-top: -160px;
-        }
-        .body-about .info404{
-            margin-top: -180px;
-        }
-        #footer404{
-            margin-top:30px;
-            font-size:10px;
-        }
-        .index404 {
-            margin-top: 24px;
-            display: inline-block;
-            white-space: nowrap;
-            cursor: pointer;
-            letter-spacing: 1px;
-            font-size: 14px;
-            -moz-user-select: -moz-none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            -o-user-select: none;
-            user-select: none;
-            text-shadow: none;
-            border: 2px solid #7b8993;
-            line-height: 36px;
-            text-align: center;
-            height: 36px;
-            padding: 0 25px;
-            border-radius: 25px;
-            background-color: #fff;
-            color: #7b8993;
-        }
-        .icon-about{
-            padding: 10px 0 25px;
-        }
-        .icon-about a{
-            font-size: 20px;
-            margin: 5px;
-            color: #fff;
-            background-color: #000;
-            border-radius: 100%;
-            padding: 6px;
         }
         @-webkit-keyframes hue {
             from {
@@ -118,16 +53,16 @@
 </head>
 <body>
 
-<div class="body404">
-    <div class="info404">
-        <header id="header404" class="clearfix">
-            <div class="site-name404">500</div>
+<div class="body500">
+    <div class="info500">
+        <header id="header500" class="clearfix">
+            <div class="site-name500">500</div>
         </header>
-        <section>
-            <div class="title404">
-                <p>I have no secret of success but hard work.</p>
-            </div><a href="/" class="index404">Back Home</a>
-        </section>
+        <h3 class="font-bold">内部服务器错误！</h3>
+        <div class="error-desc">
+            <p>服务器遇到意外事件，不允许完成请求。我们抱歉。您可以返回主页面。</p>
+            <a href="/" class="btn btn-primary m-t">主页</a>
+        </div>
     </div>
 </div>
 

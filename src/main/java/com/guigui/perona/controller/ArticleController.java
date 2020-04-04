@@ -6,6 +6,9 @@ import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.dto.ArchivesWithArticle;
 import com.guigui.perona.common.enums.BusinessType;
+import com.guigui.perona.common.utils.ShiroUtils;
+import com.guigui.perona.entity.UserInfo;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -42,9 +45,15 @@ public class ArticleController extends BaseController {
     /**
      * 查询文章列表
      */
+    @RequiresPermissions("manage:article:view")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(Article article) {
+        UserInfo currUser = ShiroUtils.getUserInfo();
+        // 不是超级管理员只能看到自己写的文章
+        if (!currUser.isSuperAdmin()) {
+            article.setAuthor(currUser.getUsername());
+        }
         startPage();
         List<Article> list = articleService.selectArticleList(article);
         return getDataTable(list);
@@ -61,6 +70,7 @@ public class ArticleController extends BaseController {
     /**
      * 新增保存文章
      */
+    @RequiresPermissions("manage:article:add")
     @OperaLog(businessName = "文章管理", businessType = BusinessType.INSERT, isSaveRequestData = false)
     @PostMapping("/add")
     @ResponseBody
@@ -84,6 +94,7 @@ public class ArticleController extends BaseController {
     /**
      * 修改保存文章
      */
+    @RequiresPermissions("manage:article:edit")
     @OperaLog(businessName = "文章管理", businessType = BusinessType.UPDATE, isSaveRequestData = false)
     @PostMapping("/edit")
     @ResponseBody
@@ -97,6 +108,7 @@ public class ArticleController extends BaseController {
     /**
      * 删除文章
      */
+    @RequiresPermissions("manage:article:remove")
     @OperaLog(businessName = "文章管理", businessType = BusinessType.DELETE, isSaveRequestData = false)
     @PostMapping("/remove")
     @ResponseBody

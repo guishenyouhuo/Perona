@@ -5,6 +5,7 @@ import java.util.List;
 import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.enums.BusinessType;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -41,6 +42,7 @@ public class ArtTagController extends BaseController {
     /**
      * 查询标签列表
      */
+    @RequiresPermissions("manage:tag:view")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(ArtTag artTag) {
@@ -60,6 +62,7 @@ public class ArtTagController extends BaseController {
     /**
      * 新增保存标签
      */
+    @RequiresPermissions("manage:tag:add")
     @OperaLog(businessName = "文章标签", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
@@ -83,6 +86,7 @@ public class ArtTagController extends BaseController {
     /**
      * 修改保存标签
      */
+    @RequiresPermissions("manage:tag:edit")
     @OperaLog(businessName = "文章标签", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
@@ -96,6 +100,7 @@ public class ArtTagController extends BaseController {
     /**
      * 删除标签
      */
+    @RequiresPermissions("manage:tag:remove")
     @OperaLog(businessName = "文章标签", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody

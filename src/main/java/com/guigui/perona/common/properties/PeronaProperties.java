@@ -18,8 +18,6 @@ public class PeronaProperties {
 
     private SwaggerProperties swagger = new SwaggerProperties();
 
-    private CloudProperties cloud = new CloudProperties();
-
     private GenProperties gen = new GenProperties();
 
     private ProjectProperties project = new ProjectProperties();

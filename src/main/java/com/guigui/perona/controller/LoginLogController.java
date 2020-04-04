@@ -5,6 +5,7 @@ import java.util.List;
 import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.common.utils.PasswordHelper;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,7 @@ public class LoginLogController extends BaseController {
     /**
      * 查询登陆日志列表
      */
+    @RequiresPermissions("manage:loginLog:view")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(LoginLog loginLog) {
@@ -53,6 +55,7 @@ public class LoginLogController extends BaseController {
     /**
      * 删除登陆日志
      */
+    @RequiresPermissions("manage:loginLog:remove")
     @OperaLog(businessName = "登陆日志", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
@@ -60,6 +63,7 @@ public class LoginLogController extends BaseController {
         return toAjax(loginLogService.deleteLoginLogByIds(ids));
     }
 
+    @RequiresPermissions("manage:loginLog:clean")
     @OperaLog(businessName = "登陆日志", businessType = BusinessType.CLEAN)
     @PostMapping("/clean")
     @ResponseBody
@@ -68,6 +72,7 @@ public class LoginLogController extends BaseController {
         return success();
     }
 
+    @RequiresPermissions("manage:loginLog:unlock")
     @OperaLog(businessName = "账户解锁", businessType = BusinessType.OTHER)
     @PostMapping("/unlock")
     @ResponseBody

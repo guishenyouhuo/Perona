@@ -7,6 +7,7 @@ import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.entity.RoleInfo;
 import com.guigui.perona.manage.web.domain.Ztree;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -42,6 +43,7 @@ public class DeptInfoController extends BaseController {
     /**
      * 查询部门列表
      */
+    @RequiresPermissions("manage:dept:view")
     @PostMapping("/list")
     @ResponseBody
     public List<DeptInfo> list(DeptInfo deptInfo) {
@@ -60,6 +62,7 @@ public class DeptInfoController extends BaseController {
     /**
      * 新增保存部门
      */
+    @RequiresPermissions("manage:dept:add")
     @OperaLog(businessName = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
@@ -89,6 +92,7 @@ public class DeptInfoController extends BaseController {
     /**
      * 修改保存部门
      */
+    @RequiresPermissions("manage:dept:edit")
     @OperaLog(businessName = "部门管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
@@ -104,6 +108,7 @@ public class DeptInfoController extends BaseController {
     /**
      * 删除部门
      */
+    @RequiresPermissions("manage:dept:remove")
     @OperaLog(businessName = "部门管理", businessType = BusinessType.DELETE)
     @GetMapping("/remove/{deptId}")
     @ResponseBody

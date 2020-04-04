@@ -14,6 +14,7 @@ public class ShiroProperties {
     private String loginUrl;
     private String successUrl;
     private String logoutUrl;
+    private String unauthorizedUrl;
     private int hashTimes;
     private String hashAlgorithm;
     private boolean captchaEnabled;

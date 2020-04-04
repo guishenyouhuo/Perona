@@ -144,17 +144,19 @@ public class ShiroConfig {
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
         ShiroProperties shiro = properties.getShiro();
         ShiroFilterFactoryBean filter = new ShiroFilterFactoryBean();
+        // Shiro的核心安全接口,这个属性是必须的
         filter.setSecurityManager(securityManager);
+        // 身份认证失败，则跳转到登录页面的配置
         filter.setLoginUrl(shiro.getLoginUrl());
         filter.setSuccessUrl(shiro.getSuccessUrl());
+        // 权限认证失败，则跳转到指定页面
+        filter.setUnauthorizedUrl(shiro.getUnauthorizedUrl());
 
         Map<String, String> filterChain = new LinkedHashMap<>();
         String[] urls = shiro.getAnonUrl().split(",");
         for (String url : urls) {
             filterChain.put(url.trim(), "anon");
         }
-//        filterChain.put("/**", "user");
-//        filterChain.put("/**", "anon");
 
         // 退出 logout地址，shiro去清除session
         filterChain.put("/manage/logout", "logout");

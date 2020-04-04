@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.enums.BusinessType;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,6 +41,7 @@ public class OperateLogController extends BaseController {
     /**
      * 查询操作日志记录列表
      */
+    @RequiresPermissions("manage:operateLog:view")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(OperateLog operateLog) {
@@ -59,6 +61,7 @@ public class OperateLogController extends BaseController {
     /**
      * 新增保存操作日志记录
      */
+    @RequiresPermissions("manage:operateLog:add")
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(OperateLog operateLog) {
@@ -78,6 +81,7 @@ public class OperateLogController extends BaseController {
     /**
      * 修改保存操作日志记录
      */
+    @RequiresPermissions("manage:operateLog:edit")
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(OperateLog operateLog) {
@@ -87,6 +91,7 @@ public class OperateLogController extends BaseController {
     /**
      * 删除操作日志记录
      */
+    @RequiresPermissions("manage:operateLog:remove")
     @OperaLog(businessName = "操作日志", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
@@ -100,6 +105,7 @@ public class OperateLogController extends BaseController {
         return prefix + "/detail";
     }
 
+    @RequiresPermissions("manage:operateLog:clean")
     @OperaLog(businessName = "操作日志", businessType = BusinessType.CLEAN)
     @PostMapping("/clean")
     @ResponseBody

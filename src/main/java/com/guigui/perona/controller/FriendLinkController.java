@@ -5,6 +5,7 @@ import java.util.List;
 import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.enums.BusinessType;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -41,6 +42,7 @@ public class FriendLinkController extends BaseController {
     /**
      * 查询友链列表
      */
+    @RequiresPermissions("manage:friend:view")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(FriendLink friendLink) {
@@ -60,6 +62,7 @@ public class FriendLinkController extends BaseController {
     /**
      * 新增保存友链
      */
+    @RequiresPermissions("manage:friend:add")
     @OperaLog(businessName = "友链管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
@@ -83,6 +86,7 @@ public class FriendLinkController extends BaseController {
     /**
      * 修改保存友链
      */
+    @RequiresPermissions("manage:friend:edit")
     @OperaLog(businessName = "友链管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
@@ -96,6 +100,7 @@ public class FriendLinkController extends BaseController {
     /**
      * 删除友链
      */
+    @RequiresPermissions("manage:friend:remove")
     @OperaLog(businessName = "友链管理", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody

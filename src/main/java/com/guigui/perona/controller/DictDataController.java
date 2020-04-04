@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.enums.BusinessType;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,6 +41,7 @@ public class DictDataController extends BaseController {
     /**
      * 查询字典数据列表
      */
+    @RequiresPermissions("manage:dict_data:view")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(DictData dictData) {
@@ -60,6 +62,7 @@ public class DictDataController extends BaseController {
     /**
      * 新增保存字典数据
      */
+    @RequiresPermissions("manage:dict_data:add")
     @OperaLog(businessName = "字典数据", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
@@ -80,6 +83,7 @@ public class DictDataController extends BaseController {
     /**
      * 修改保存字典数据
      */
+    @RequiresPermissions("manage:dict_data:edit")
     @OperaLog(businessName = "字典数据", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
@@ -90,6 +94,7 @@ public class DictDataController extends BaseController {
     /**
      * 删除字典数据
      */
+    @RequiresPermissions("manage:dict_data:remove")
     @OperaLog(businessName = "字典数据", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody

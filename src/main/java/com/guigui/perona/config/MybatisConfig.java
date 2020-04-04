@@ -10,16 +10,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
 /**
- * @Description: mybatis配置
- * @Author: guigui
- * @Date: 2019-10-26 10:23
+ * mybatis配置
+ *
+ * @author guigui
  */
 @Configuration
 @MapperScan(basePackages = {"com.guigui.perona.mapper", "com.guigui.perona.manage.tool.gencode.mapper"})
@@ -28,6 +27,8 @@ public class MybatisConfig {
     private static final String MAPPER_XML_PACKAGE = "classpath:mapper/perona/*.xml";
 
     private static final String MYBATIS_BEAN_PACKAGE = "com.guigui.perona.entity.**";
+
+    private static final String MYBATIS_CONFIG_LOCATION = "classpath:mapper/mybatis-config.xml";
 
     @Primary
     @ConfigurationProperties(prefix = "spring.datasource.druid")
@@ -41,14 +42,11 @@ public class MybatisConfig {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
         sqlSessionFactoryBean.setDataSource(dataSourceConfig());
 
-        // 设置扫描 mybatis-config.xml
-        sqlSessionFactoryBean.setConfigLocation(null);
-
-        // 设置扫描mapper.xml
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource[] resources = resolver.getResources(MAPPER_XML_PACKAGE);
-        sqlSessionFactoryBean.setMapperLocations(resources);
-
+        // 设置扫描 mybatis-config.xml
+        sqlSessionFactoryBean.setConfigLocation(resolver.getResource(MYBATIS_CONFIG_LOCATION));
+        // 设置扫描mapper.xml
+        sqlSessionFactoryBean.setMapperLocations(resolver.getResources(MAPPER_XML_PACKAGE));
         // 设置扫描实体类
         sqlSessionFactoryBean.setTypeAliasesPackage(MYBATIS_BEAN_PACKAGE);
 

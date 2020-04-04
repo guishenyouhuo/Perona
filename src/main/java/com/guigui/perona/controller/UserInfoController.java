@@ -9,6 +9,7 @@ import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.common.utils.ShiroUtils;
 import com.guigui.perona.entity.RoleInfo;
 import com.guigui.perona.service.IRoleInfoService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -48,6 +49,7 @@ public class UserInfoController extends BaseController {
     /**
      * 查询用户列表
      */
+    @RequiresPermissions("manage:user:view")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(UserInfo userInfo) {
@@ -68,6 +70,7 @@ public class UserInfoController extends BaseController {
     /**
      * 新增保存用户
      */
+    @RequiresPermissions("manage:user:add")
     @OperaLog(businessName = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
@@ -99,6 +102,7 @@ public class UserInfoController extends BaseController {
     /**
      * 修改保存用户
      */
+    @RequiresPermissions("manage:user:edit")
     @OperaLog(businessName = "用户管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
@@ -112,6 +116,7 @@ public class UserInfoController extends BaseController {
     /**
      * 删除用户
      */
+    @RequiresPermissions("manage:user:remove")
     @OperaLog(businessName = "用户管理", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
@@ -141,6 +146,7 @@ public class UserInfoController extends BaseController {
         return prefix + "/resetPwd";
     }
 
+    @RequiresPermissions("manage:user:reset")
     @OperaLog(businessName = "重置密码", businessType = BusinessType.UPDATE)
     @PostMapping("/resetPwd")
     @ResponseBody
@@ -158,6 +164,7 @@ public class UserInfoController extends BaseController {
     /**
      * 用户状态修改
      */
+    @RequiresPermissions("manage:user:status")
     @OperaLog(businessName = "用户管理", businessType = BusinessType.UPDATE)
     @PostMapping("/changeStatus")
     @ResponseBody

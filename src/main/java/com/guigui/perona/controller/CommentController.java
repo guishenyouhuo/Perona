@@ -13,6 +13,7 @@ import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -103,6 +104,7 @@ public class CommentController extends BaseController {
     /**
      * 删除评论
      */
+    @RequiresPermissions("manage:comment:remove")
     @OperaLog(businessName = "评论管理", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody

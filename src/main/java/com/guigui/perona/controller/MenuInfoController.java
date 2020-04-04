@@ -7,6 +7,7 @@ import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.entity.RoleInfo;
 import com.guigui.perona.manage.web.domain.Ztree;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -42,6 +43,7 @@ public class MenuInfoController extends BaseController {
     /**
      * 查询菜单权限列表
      */
+    @RequiresPermissions("manage:menu:view")
     @PostMapping("/list")
     @ResponseBody
     public List<MenuInfo> list(MenuInfo menuInfo) {
@@ -77,6 +79,7 @@ public class MenuInfoController extends BaseController {
     /**
      * 新增保存菜单权限
      */
+    @RequiresPermissions("manage:menu:add")
     @OperaLog(businessName = "菜单管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
@@ -105,6 +108,7 @@ public class MenuInfoController extends BaseController {
     /**
      * 修改保存菜单权限
      */
+    @RequiresPermissions("manage:menu:edit")
     @OperaLog(businessName = "菜单管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
@@ -115,6 +119,7 @@ public class MenuInfoController extends BaseController {
         return toAjax(menuInfoService.updateMenuInfo(menuInfo));
     }
 
+    @RequiresPermissions("manage:menu:remove")
     @OperaLog(businessName = "菜单管理", businessType = BusinessType.DELETE)
     @GetMapping("/remove/{menuId}")
     @ResponseBody
