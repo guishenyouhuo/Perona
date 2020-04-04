@@ -1,24 +1,22 @@
 package com.guigui.perona.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
- * 系统日志表
- * </p>
+ * 操作日志记录对象 operate_log
  *
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-04-02
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class OperateLog implements Serializable {
 
@@ -27,56 +25,103 @@ public class OperateLog implements Serializable {
     /**
      * 编号
      */
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
-     * 操作用户
+     * 业务名称
      */
-    @TableField("username")
-    private String username;
+    private String bizName;
 
     /**
-     * 操作描述
+     * 业务类型（0其它 1新增 2修改 3删除）
      */
-    @TableField("operation")
-    private String operation;
+    private Integer bizType;
 
     /**
-     * 耗时(毫秒)
+     * 方法名称
      */
-    @TableField("time")
-    private Long time;
-
-    /**
-     * 操作方法
-     */
-    @TableField("method")
     private String method;
 
     /**
-     * 操作参数
+     * 请求方式
      */
-    @TableField("params")
-    private String params;
+    private String reqMethod;
 
     /**
-     * IP地址
+     * 操作类别（0其它 1后台用户 2手机端用户）
      */
-    @TableField("ip")
-    private String ip;
+    private Integer operateType;
 
     /**
-     * 操作时间
+     * 操作人员
      */
-    @TableField("create_time")
-    private LocalDateTime createTime;
+    private String operator;
+
+    /**
+     * 部门名称
+     */
+    private String deptName;
+
+    /**
+     * 请求url
+     */
+    private String operateUrl;
+
+    /**
+     * 主机地址
+     */
+    private String ipAddr;
 
     /**
      * 操作地点
      */
-    @TableField("location")
-    private String location;
+    private String operateLoc;
 
+    /**
+     * 请求参数
+     */
+    private String operateParam;
 
+    /**
+     * 返回参数
+     */
+    private String jsonResult;
+
+    /**
+     * 操作状态（0正常 1异常）
+     */
+    private Integer status;
+
+    /**
+     * 错误消息
+     */
+    private String errorMsg;
+
+    /**
+     * 操作时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date operateTime;
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
+                .append("bizName", getBizName())
+                .append("bizType", getBizType())
+                .append("method", getMethod())
+                .append("reqMethod", getReqMethod())
+                .append("operateType", getOperateType())
+                .append("operator", getOperator())
+                .append("deptName", getDeptName())
+                .append("operateUrl", getOperateUrl())
+                .append("ipAddr", getIpAddr())
+                .append("operateLoc", getOperateLoc())
+                .append("operateParam", getOperateParam())
+                .append("jsonResult", getJsonResult())
+                .append("status", getStatus())
+                .append("errorMsg", getErrorMsg())
+                .append("operateTime", getOperateTime())
+                .toString();
+    }
 }

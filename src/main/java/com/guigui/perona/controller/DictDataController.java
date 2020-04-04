@@ -2,6 +2,8 @@ package com.guigui.perona.controller;
 
 import java.util.List;
 
+import com.guigui.perona.common.aspect.annotation.OperaLog;
+import com.guigui.perona.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -58,6 +60,7 @@ public class DictDataController extends BaseController {
     /**
      * 新增保存字典数据
      */
+    @OperaLog(businessName = "字典数据", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(DictData dictData) {
@@ -77,6 +80,7 @@ public class DictDataController extends BaseController {
     /**
      * 修改保存字典数据
      */
+    @OperaLog(businessName = "字典数据", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(DictData dictData) {
@@ -86,6 +90,7 @@ public class DictDataController extends BaseController {
     /**
      * 删除字典数据
      */
+    @OperaLog(businessName = "字典数据", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {

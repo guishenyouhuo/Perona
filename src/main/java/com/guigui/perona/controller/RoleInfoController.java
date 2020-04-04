@@ -2,7 +2,9 @@ package com.guigui.perona.controller;
 
 import java.util.List;
 
+import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.UserConstants;
+import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.entity.UserInfo;
 import com.guigui.perona.entity.UserRole;
 import com.guigui.perona.service.IUserInfoService;
@@ -57,7 +59,7 @@ public class RoleInfoController extends BaseController {
      * 新增角色信息
      */
     @GetMapping("/add")
-    public String addview() {
+    public String addView() {
         return prefix + "/add";
     }
 
@@ -82,6 +84,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 新增保存角色信息
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(RoleInfo roleInfo) {
@@ -106,6 +109,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 修改保存角色信息
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(RoleInfo roleInfo) {
@@ -121,6 +125,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 删除角色信息
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
@@ -134,6 +139,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 启用/停用角色
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.UPDATE)
     @PostMapping("/changeStatus")
     @ResponseBody
     public AjaxResult changeStatus(RoleInfo roleInfo) {
@@ -144,6 +150,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 角色分配数据权限
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.UPDATE)
     @GetMapping("/authDataScope/{roleId}")
     public String authDataScope(@PathVariable("roleId") Long roleId, ModelMap mmap) {
         mmap.put("role", roleInfoService.selectRoleInfoById(roleId));
@@ -153,6 +160,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 保存角色分配数据权限
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.UPDATE)
     @PostMapping("/authDataScope")
     @ResponseBody
     public AjaxResult authDataScopeSave(RoleInfo roleInfo) {
@@ -207,6 +215,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 取消授权
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.GRANT)
     @PostMapping("/authUser/cancel")
     @ResponseBody
     public AjaxResult cancelAuthUser(UserRole userRole) {
@@ -216,6 +225,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 批量取消授权
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.GRANT)
     @PostMapping("/authUser/cancelAll")
     @ResponseBody
     public AjaxResult cancelAuthUserAll(Long roleId, String userIds) {
@@ -225,6 +235,7 @@ public class RoleInfoController extends BaseController {
     /**
      * 批量选择用户授权
      */
+    @OperaLog(businessName = "角色管理", businessType = BusinessType.GRANT)
     @PostMapping("/authUser/authAllSelected")
     @ResponseBody
     public AjaxResult authAllSelect(Long roleId, String userIds) {

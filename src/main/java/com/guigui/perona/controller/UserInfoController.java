@@ -3,7 +3,9 @@ package com.guigui.perona.controller;
 import java.util.List;
 import java.util.Set;
 
+import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.UserConstants;
+import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.common.utils.ShiroUtils;
 import com.guigui.perona.entity.RoleInfo;
 import com.guigui.perona.service.IRoleInfoService;
@@ -66,6 +68,7 @@ public class UserInfoController extends BaseController {
     /**
      * 新增保存用户
      */
+    @OperaLog(businessName = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(UserInfo userInfo) {
@@ -96,6 +99,7 @@ public class UserInfoController extends BaseController {
     /**
      * 修改保存用户
      */
+    @OperaLog(businessName = "用户管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(UserInfo userInfo) {
@@ -108,6 +112,7 @@ public class UserInfoController extends BaseController {
     /**
      * 删除用户
      */
+    @OperaLog(businessName = "用户管理", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
@@ -136,6 +141,7 @@ public class UserInfoController extends BaseController {
         return prefix + "/resetPwd";
     }
 
+    @OperaLog(businessName = "重置密码", businessType = BusinessType.UPDATE)
     @PostMapping("/resetPwd")
     @ResponseBody
     public AjaxResult resetPwdSave(UserInfo userInfo) {
@@ -152,11 +158,39 @@ public class UserInfoController extends BaseController {
     /**
      * 用户状态修改
      */
+    @OperaLog(businessName = "用户管理", businessType = BusinessType.UPDATE)
     @PostMapping("/changeStatus")
     @ResponseBody
     public AjaxResult changeUserStatus(UserInfo userInfo) {
         userInfoService.checkUserAllowed(userInfo);
         return toAjax(userInfoService.changeStatus(userInfo));
+    }
+
+    /**
+     * 校验用户名
+     */
+    @PostMapping("/checkLoginNameUnique")
+    @ResponseBody
+    public String checkLoginNameUnique(UserInfo userInfo) {
+        return userInfoService.checkLoginNameUnique(userInfo);
+    }
+
+    /**
+     * 校验手机号码
+     */
+    @PostMapping("/checkPhoneUnique")
+    @ResponseBody
+    public String checkPhoneUnique(UserInfo userInfo) {
+        return userInfoService.checkPhoneUnique(userInfo);
+    }
+
+    /**
+     * 校验email邮箱
+     */
+    @PostMapping("/checkEmailUnique")
+    @ResponseBody
+    public String checkEmailUnique(UserInfo userInfo) {
+        return userInfoService.checkEmailUnique(userInfo);
     }
 
 }

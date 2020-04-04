@@ -1,27 +1,67 @@
 package com.guigui.perona.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.guigui.perona.common.utils.QueryPage;
 import com.guigui.perona.entity.OperateLog;
-import com.baomidou.mybatisplus.extension.service.IService;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.springframework.scheduling.annotation.Async;
+
+import java.util.List;
 
 /**
- * <p>
- * 系统日志表 服务类
- * </p>
+ * 操作日志记录Service接口
  *
  * @author guigui
- * @since 2019-10-25
+ * @date 2020-04-02
  */
-public interface IOperateLogService extends IService<OperateLog> {
+public interface IOperateLogService {
+    /**
+     * 查询操作日志记录
+     *
+     * @param id 操作日志记录ID
+     * @return 操作日志记录
+     */
+    OperateLog selectOperateLogById(Long id);
 
-    IPage<OperateLog> list(OperateLog log, QueryPage queryPage);
+    /**
+     * 查询操作日志记录列表
+     *
+     * @param operateLog 操作日志记录
+     * @return 操作日志记录集合
+     */
+    List<OperateLog> selectOperateLogList(OperateLog operateLog);
 
-    void delete(Long id);
+    /**
+     * 新增操作日志记录
+     *
+     * @param operateLog 操作日志记录
+     * @return 结果
+     */
+    int insertOperateLog(OperateLog operateLog);
 
-    @Async
-    void saveLog(ProceedingJoinPoint proceedingJoinPoint, OperateLog log) throws JsonProcessingException;
+    /**
+     * 修改操作日志记录
+     *
+     * @param operateLog 操作日志记录
+     * @return 结果
+     */
+    int updateOperateLog(OperateLog operateLog);
+
+    /**
+     * 批量删除操作日志记录
+     *
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    int deleteOperateLogByIds(String ids);
+
+    /**
+     * 删除操作日志记录信息
+     *
+     * @param id 操作日志记录ID
+     * @return 结果
+     */
+    int deleteOperateLogById(Long id);
+
+    /**
+     * 清空操作日志记录
+     */
+    void cleanOperateLog();
+
 }

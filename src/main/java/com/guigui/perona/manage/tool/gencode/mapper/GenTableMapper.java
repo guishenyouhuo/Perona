@@ -1,6 +1,5 @@
 package com.guigui.perona.manage.tool.gencode.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.guigui.perona.entity.gencode.GenTable;
 
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
  *
  * @author guigui
  */
-public interface GenTableMapper extends BaseMapper<GenTable> {
+public interface GenTableMapper {
     /**
      * 查询业务列表
      *

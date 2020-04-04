@@ -2,7 +2,9 @@ package com.guigui.perona.controller;
 
 import java.util.List;
 
+import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.CommonConstants;
+import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.common.exception.GlobalException;
 import com.guigui.perona.common.utils.AddressUtils;
 import com.guigui.perona.common.utils.DateUtils;
@@ -57,6 +59,7 @@ public class CommentController extends BaseController {
     /**
      * 新增保存评论
      */
+    @OperaLog(businessName = "评论管理", businessType = BusinessType.INSERT)
     @PostMapping("/api/comment")
     @ResponseBody
     public AjaxResult addSave(@RequestBody Comment comment, HttpServletRequest request) {
@@ -90,6 +93,7 @@ public class CommentController extends BaseController {
     /**
      * 修改保存评论
      */
+    @OperaLog(businessName = "评论管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(Comment comment) {
@@ -99,6 +103,7 @@ public class CommentController extends BaseController {
     /**
      * 删除评论
      */
+    @OperaLog(businessName = "评论管理", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {

@@ -2,8 +2,10 @@ package com.guigui.perona.controller;
 
 import java.util.List;
 
+import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.dto.ArchivesWithArticle;
+import com.guigui.perona.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -59,6 +61,7 @@ public class ArticleController extends BaseController {
     /**
      * 新增保存文章
      */
+    @OperaLog(businessName = "文章管理", businessType = BusinessType.INSERT, isSaveRequestData = false)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(Article article) {
@@ -81,6 +84,7 @@ public class ArticleController extends BaseController {
     /**
      * 修改保存文章
      */
+    @OperaLog(businessName = "文章管理", businessType = BusinessType.UPDATE, isSaveRequestData = false)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(Article article) {
@@ -93,6 +97,7 @@ public class ArticleController extends BaseController {
     /**
      * 删除文章
      */
+    @OperaLog(businessName = "文章管理", businessType = BusinessType.DELETE, isSaveRequestData = false)
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {

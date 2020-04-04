@@ -2,7 +2,9 @@ package com.guigui.perona.controller;
 
 import java.util.List;
 
+import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.UserConstants;
+import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.entity.RoleInfo;
 import com.guigui.perona.manage.web.domain.Ztree;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +77,7 @@ public class MenuInfoController extends BaseController {
     /**
      * 新增保存菜单权限
      */
+    @OperaLog(businessName = "菜单管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(MenuInfo menuInfo) {
@@ -102,6 +105,7 @@ public class MenuInfoController extends BaseController {
     /**
      * 修改保存菜单权限
      */
+    @OperaLog(businessName = "菜单管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(MenuInfo menuInfo) {
@@ -111,6 +115,7 @@ public class MenuInfoController extends BaseController {
         return toAjax(menuInfoService.updateMenuInfo(menuInfo));
     }
 
+    @OperaLog(businessName = "菜单管理", businessType = BusinessType.DELETE)
     @GetMapping("/remove/{menuId}")
     @ResponseBody
     public AjaxResult remove(@PathVariable("menuId") Long menuId) {

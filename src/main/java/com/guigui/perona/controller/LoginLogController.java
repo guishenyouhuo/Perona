@@ -1,11 +1,13 @@
 package com.guigui.perona.controller;
 
 import java.util.List;
+
+import com.guigui.perona.common.aspect.annotation.OperaLog;
+import com.guigui.perona.common.enums.BusinessType;
+import com.guigui.perona.common.utils.PasswordHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,17 +19,20 @@ import com.guigui.perona.manage.web.page.TableDataInfo;
 
 /**
  * 登陆日志Controller
- * 
+ *
  * @author guigui
  * @date 2020-03-31
  */
 @Controller
 @RequestMapping("/manage/loginLog")
 public class LoginLogController extends BaseController {
-    private String prefix = "manage/loginLog";
+    private String prefix = "manage/monitor/loginLog";
 
     @Autowired
     private ILoginLogService loginLogService;
+
+    @Autowired
+    private PasswordHelper passwordHelper;
 
     @GetMapping()
     public String loginLog() {
@@ -35,7 +40,7 @@ public class LoginLogController extends BaseController {
     }
 
     /**
-     * 查询【请填写功能名称】列表
+     * 查询登陆日志列表
      */
     @PostMapping("/list")
     @ResponseBody
@@ -46,48 +51,29 @@ public class LoginLogController extends BaseController {
     }
 
     /**
-     * 新增【请填写功能名称】
+     * 删除登陆日志
      */
-    @GetMapping("/add")
-    public String add() {
-        return prefix + "/add";
-    }
-
-    /**
-     * 新增保存【请填写功能名称】
-     */
-    @PostMapping("/add")
-    @ResponseBody
-    public AjaxResult addSave(LoginLog loginLog) {
-        return toAjax(loginLogService.insertLoginLog(loginLog));
-    }
-
-    /**
-     * 修改【请填写功能名称】
-     */
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Long id, ModelMap mmap) {
-        LoginLog loginLog = loginLogService.selectLoginLogById(id);
-        mmap.put("loginLog", loginLog);
-        return prefix + "/edit";
-    }
-
-    /**
-     * 修改保存【请填写功能名称】
-     */
-    @PostMapping("/edit")
-    @ResponseBody
-    public AjaxResult editSave(LoginLog loginLog) {
-        return toAjax(loginLogService.updateLoginLog(loginLog));
-    }
-
-    /**
-     * 删除【请填写功能名称】
-     */
-    @PostMapping( "/remove")
+    @OperaLog(businessName = "登陆日志", businessType = BusinessType.DELETE)
+    @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {
         return toAjax(loginLogService.deleteLoginLogByIds(ids));
+    }
+
+    @OperaLog(businessName = "登陆日志", businessType = BusinessType.CLEAN)
+    @PostMapping("/clean")
+    @ResponseBody
+    public AjaxResult clean() {
+        loginLogService.cleanLoginLog();
+        return success();
+    }
+
+    @OperaLog(businessName = "账户解锁", businessType = BusinessType.OTHER)
+    @PostMapping("/unlock")
+    @ResponseBody
+    public AjaxResult unlock(String loginName) {
+        passwordHelper.clearLoginRecordCache(loginName);
+        return success();
     }
 
 }

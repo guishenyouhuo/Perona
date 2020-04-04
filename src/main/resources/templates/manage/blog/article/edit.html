@@ -27,6 +27,7 @@
                         <label class="col-sm-4 control-label is-required">文章分类：</label>
                         <div class="col-sm-6">
                             <select id="category" name="category" class="form-control m-b" th:with="categories=${@articleEdit.getCategories()}">
+                                <option value="">请选择</option>
                                 <option th:each="category : ${categories}" th:text="${category.name}" th:value="${category.id}" th:field="*{category}"></option>
                             </select>
                         </div>
@@ -37,6 +38,7 @@
                         <label class="col-sm-3 control-label is-required">文章标签：</label>
                         <div class="col-sm-7">
                             <select id="tagIds" name="tagIds" class="form-control m-b select2-multiple" th:with="tags=${@articleEdit.getArtTags()}" multiple>
+                                <option value="">请选择</option>
                                 <option th:each="tag : ${tags}" th:text="${tag.name}" th:value="${tag.id}" th:field="*{tagIds}"></option>
                             </select>
                         </div>

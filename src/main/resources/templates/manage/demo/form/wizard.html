@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-	<th:block th:include="include :: header('基本表单')" />
-	<th:block th:include="include :: jquery-steps-css" />
+	<th:block th:include="manage/include :: header('基本表单')" />
+	<th:block th:include="manage/include :: jquery-steps-css" />
 </head>
 <body class="gray-bg">
     <div class="wrapper wrapper-content animated fadeInRight">
@@ -146,8 +146,8 @@
 
         </div>
     </div>
-    <th:block th:include="include :: footer" />
-    <th:block th:include="include :: jquery-steps-js" />
+    <th:block th:include="manage/include :: footer" />
+    <th:block th:include="manage/include :: jquery-steps-js" />
     <script>
 	    $(document).ready(function () {
 	        $("#wizard").steps();

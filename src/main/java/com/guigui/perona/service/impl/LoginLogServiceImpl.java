@@ -22,10 +22,10 @@ public class LoginLogServiceImpl implements ILoginLogService {
     private LoginLogMapper loginLogMapper;
 
     /**
-     * 查询【请填写功能名称】
+     * 查询登陆日志
      * 
-     * @param id 【请填写功能名称】ID
-     * @return 【请填写功能名称】
+     * @param id 登陆日志ID
+     * @return 登陆日志
      */
     @Override
     public LoginLog selectLoginLogById(Long id) {
@@ -33,10 +33,10 @@ public class LoginLogServiceImpl implements ILoginLogService {
     }
 
     /**
-     * 查询【请填写功能名称】列表
+     * 查询登陆日志列表
      * 
-     * @param loginLog 【请填写功能名称】
-     * @return 【请填写功能名称】
+     * @param loginLog 登陆日志
+     * @return 登陆日志
      */
     @Override
     public List<LoginLog> selectLoginLogList(LoginLog loginLog) {
@@ -44,9 +44,9 @@ public class LoginLogServiceImpl implements ILoginLogService {
     }
 
     /**
-     * 新增【请填写功能名称】
+     * 新增登陆日志
      * 
-     * @param loginLog 【请填写功能名称】
+     * @param loginLog 登陆日志
      * @return 结果
      */
     @Override
@@ -56,9 +56,9 @@ public class LoginLogServiceImpl implements ILoginLogService {
     }
 
     /**
-     * 修改【请填写功能名称】
+     * 修改登陆日志
      * 
-     * @param loginLog 【请填写功能名称】
+     * @param loginLog 登陆日志
      * @return 结果
      */
     @Override
@@ -67,7 +67,7 @@ public class LoginLogServiceImpl implements ILoginLogService {
     }
 
     /**
-     * 删除【请填写功能名称】对象
+     * 删除登陆日志对象
      * 
      * @param ids 需要删除的数据ID
      * @return 结果
@@ -78,14 +78,19 @@ public class LoginLogServiceImpl implements ILoginLogService {
     }
 
     /**
-     * 删除【请填写功能名称】信息
+     * 删除登陆日志信息
      * 
-     * @param id 【请填写功能名称】ID
+     * @param id 登陆日志ID
      * @return 结果
      */
     @Override
     public int deleteLoginLogById(Long id) {
         return loginLogMapper.deleteLoginLogById(id);
+    }
+
+    @Override
+    public void cleanLoginLog() {
+        loginLogMapper.cleanLoginLog();
     }
 
 }

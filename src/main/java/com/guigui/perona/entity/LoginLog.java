@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * 【请填写功能名称】对象 login_log
+ * 登陆日志对象 login_log
  *
  * @author guigui
  * @date 2020-03-31

@@ -1,5 +1,130 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.guigui.perona.mapper.OperateLogMapper">
+    <resultMap type="OperateLog" id="OperateLogResult">
+        <result property="id" column="id"/>
+        <result property="bizName" column="biz_name"/>
+        <result property="bizType" column="biz_type"/>
+        <result property="method" column="method"/>
+        <result property="reqMethod" column="req_method"/>
+        <result property="operateType" column="operate_type"/>
+        <result property="operator" column="operator"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="operateUrl" column="operate_url"/>
+        <result property="ipAddr" column="ip_addr"/>
+        <result property="operateLoc" column="operate_loc"/>
+        <result property="operateParam" column="operate_param"/>
+        <result property="jsonResult" column="json_result"/>
+        <result property="status" column="status"/>
+        <result property="errorMsg" column="error_msg"/>
+        <result property="operateTime" column="operate_time"/>
+    </resultMap>
 
+    <sql id="operateLogFields">id, biz_name, biz_type, method, req_method, operate_type, operator, dept_name, operate_url, ip_addr, operate_loc, operate_param, json_result, status, error_msg, operate_time</sql>
+
+    <select id="selectOperateLogList" parameterType="OperateLog" resultMap="OperateLogResult">
+        select
+        <include refid="operateLogFields"/>
+        from operate_log
+        <where>  
+            <if test="bizName != null  and bizName != ''"> and biz_name like concat('%', #{bizName}, '%')</if>
+            <if test="bizType != null "> and biz_type = #{bizType}</if>
+            <if test="method != null  and method != ''"> and method = #{method}</if>
+            <if test="reqMethod != null  and reqMethod != ''"> and req_method = #{reqMethod}</if>
+            <if test="operateType != null "> and operate_type = #{operateType}</if>
+            <if test="operator != null  and operator != ''"> and operator = #{operator}</if>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+            <if test="operateUrl != null  and operateUrl != ''"> and operate_url = #{operateUrl}</if>
+            <if test="ipAddr != null  and ipAddr != ''"> and ip_addr = #{ipAddr}</if>
+            <if test="operateLoc != null  and operateLoc != ''"> and operate_loc = #{operateLoc}</if>
+            <if test="operateParam != null  and operateParam != ''"> and operate_param = #{operateParam}</if>
+            <if test="jsonResult != null  and jsonResult != ''"> and json_result = #{jsonResult}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="errorMsg != null  and errorMsg != ''"> and error_msg = #{errorMsg}</if>
+            <if test="operateTime != null "> and operate_time = #{operateTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectOperateLogById" parameterType="Long" resultMap="OperateLogResult">
+        select
+        <include refid="operateLogFields"/>
+        from operate_log
+        where id = #{id}
+    </select>
+        
+    <insert id="insertOperateLog" parameterType="OperateLog" useGeneratedKeys="true" keyProperty="id">
+        insert into operate_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bizName != null  and bizName != ''">biz_name,</if>
+            <if test="bizType != null ">biz_type,</if>
+            <if test="method != null  and method != ''">method,</if>
+            <if test="reqMethod != null  and reqMethod != ''">req_method,</if>
+            <if test="operateType != null ">operate_type,</if>
+            <if test="operator != null  and operator != ''">operator,</if>
+            <if test="deptName != null  and deptName != ''">dept_name,</if>
+            <if test="operateUrl != null  and operateUrl != ''">operate_url,</if>
+            <if test="ipAddr != null  and ipAddr != ''">ip_addr,</if>
+            <if test="operateLoc != null  and operateLoc != ''">operate_loc,</if>
+            <if test="operateParam != null  and operateParam != ''">operate_param,</if>
+            <if test="jsonResult != null  and jsonResult != ''">json_result,</if>
+            <if test="status != null ">status,</if>
+            <if test="errorMsg != null  and errorMsg != ''">error_msg,</if>
+            <if test="operateTime != null ">operate_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bizName != null  and bizName != ''">#{bizName},</if>
+            <if test="bizType != null ">#{bizType},</if>
+            <if test="method != null  and method != ''">#{method},</if>
+            <if test="reqMethod != null  and reqMethod != ''">#{reqMethod},</if>
+            <if test="operateType != null ">#{operateType},</if>
+            <if test="operator != null  and operator != ''">#{operator},</if>
+            <if test="deptName != null  and deptName != ''">#{deptName},</if>
+            <if test="operateUrl != null  and operateUrl != ''">#{operateUrl},</if>
+            <if test="ipAddr != null  and ipAddr != ''">#{ipAddr},</if>
+            <if test="operateLoc != null  and operateLoc != ''">#{operateLoc},</if>
+            <if test="operateParam != null  and operateParam != ''">#{operateParam},</if>
+            <if test="jsonResult != null  and jsonResult != ''">#{jsonResult},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="errorMsg != null  and errorMsg != ''">#{errorMsg},</if>
+            <if test="operateTime != null ">#{operateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOperateLog" parameterType="OperateLog">
+        update operate_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bizName != null  and bizName != ''">biz_name = #{bizName},</if>
+            <if test="bizType != null ">biz_type = #{bizType},</if>
+            <if test="method != null  and method != ''">method = #{method},</if>
+            <if test="reqMethod != null  and reqMethod != ''">req_method = #{reqMethod},</if>
+            <if test="operateType != null ">operate_type = #{operateType},</if>
+            <if test="operator != null  and operator != ''">operator = #{operator},</if>
+            <if test="deptName != null  and deptName != ''">dept_name = #{deptName},</if>
+            <if test="operateUrl != null  and operateUrl != ''">operate_url = #{operateUrl},</if>
+            <if test="ipAddr != null  and ipAddr != ''">ip_addr = #{ipAddr},</if>
+            <if test="operateLoc != null  and operateLoc != ''">operate_loc = #{operateLoc},</if>
+            <if test="operateParam != null  and operateParam != ''">operate_param = #{operateParam},</if>
+            <if test="jsonResult != null  and jsonResult != ''">json_result = #{jsonResult},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="errorMsg != null  and errorMsg != ''">error_msg = #{errorMsg},</if>
+            <if test="operateTime != null ">operate_time = #{operateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOperateLogById" parameterType="Long">
+        delete from operate_log where id = #{id}
+    </delete>
+
+    <delete id="deleteOperateLogByIds" parameterType="String">
+        delete from operate_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="cleanOperateLog">
+        truncate table operate_log
+    </update>
+    
 </mapper>

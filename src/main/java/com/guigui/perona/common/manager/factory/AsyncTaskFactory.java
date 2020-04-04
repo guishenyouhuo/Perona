@@ -3,13 +3,16 @@ package com.guigui.perona.common.manager.factory;
 import com.guigui.perona.common.constants.CommonConstants;
 import com.guigui.perona.common.utils.*;
 import com.guigui.perona.entity.LoginLog;
+import com.guigui.perona.entity.OperateLog;
 import com.guigui.perona.entity.UserInfo;
 import com.guigui.perona.service.ILoginLogService;
+import com.guigui.perona.service.IOperateLogService;
 import com.guigui.perona.service.IUserInfoService;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.TimerTask;
 
 /**
@@ -21,50 +24,22 @@ public class AsyncTaskFactory {
     private static final Logger logger = LoggerFactory.getLogger(AsyncTaskFactory.class);
 
     /**
-     * 同步session到数据库
-     *
-     * @param session 在线用户会话
-     * @return 任务task
-     */
-//    public static TimerTask syncSessionToDb(final OnlineSession session) {
-//        return new TimerTask() {
-//            @Override
-//            public void run() {
-//                UserOnline online = new UserOnline();
-//                online.setSessionId(String.valueOf(session.getId()));
-//                online.setDeptName(session.getDeptName());
-//                online.setLoginName(session.getLoginName());
-//                online.setStartTimestamp(session.getStartTimestamp());
-//                online.setLastAccessTime(session.getLastAccessTime());
-//                online.setExpireTime(session.getTimeout());
-//                online.setIpaddr(session.getHost());
-//                online.setLoginLocation(AddressUtils.getRealAddressByIP(session.getHost()));
-//                online.setBrowser(session.getBrowser());
-//                online.setOs(session.getOs());
-//                online.setStatus(session.getStatus());
-//                online.setSession(session);
-//                SpringUtils.getBean(IUserOnlineService.class).saveOnline(online);
-//
-//            }
-//        };
-//    }
-
-    /**
      * 操作日志记录
      *
-     * @param operLog 操作日志信息
+     * @param operateLog 操作日志信息
      * @return 任务task
      */
-//    public static TimerTask recordOper(final OperLog operLog) {
-//        return new TimerTask() {
-//            @Override
-//            public void run() {
-//                // 远程查询操作地点
-//                operLog.setOperLocation(AddressUtils.getRealAddressByIP(operLog.getOperIp()));
-//                SpringUtils.getBean(IOperLogService.class).insertOperlog(operLog);
-//            }
-//        };
-//    }
+    public static TimerTask recordOperate(final OperateLog operateLog) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                // 远程查询操作地点
+                operateLog.setOperateLoc(AddressUtils.getAddress(operateLog.getIpAddr()));
+                operateLog.setOperateTime(DateUtils.getNowDate());
+                SpringContextUtils.getBean(IOperateLogService.class).insertOperateLog(operateLog);
+            }
+        };
+    }
 
     /**
      * 更新用户登陆信息
@@ -73,7 +48,7 @@ public class AsyncTaskFactory {
      * @return 任务task
      */
     public static TimerTask recordUserInfo(final UserInfo userInfo) {
-        String ip = ShiroUtils.getIp();
+        String ip = IPUtils.getIpAddr(ServletUtils.getRequest());
         return new TimerTask() {
             @Override
             public void run() {
@@ -95,8 +70,9 @@ public class AsyncTaskFactory {
      * @return 任务task
      */
     public static TimerTask recordLoginLog(final String username, final String status, final String message, final Object... args) {
-        final UserAgent userAgent = UserAgent.parseUserAgentString(ServletUtils.getRequest().getHeader(CommonConstants.USER_AGENT));
-        final String ip = ShiroUtils.getIp();
+        HttpServletRequest request = ServletUtils.getRequest();
+        final UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader(CommonConstants.USER_AGENT));
+        final String ip = IPUtils.getIpAddr(request);
         return new TimerTask() {
             @Override
             public void run() {

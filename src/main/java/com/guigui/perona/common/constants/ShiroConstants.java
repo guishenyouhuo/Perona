@@ -69,5 +69,5 @@ public interface ShiroConstants {
     /**
      * 系统活跃用户缓存
      */
-    String SYS_USERCACHE = "sys-userCache";
+    String USER_CACHE = "userCache";
 }

@@ -43,7 +43,7 @@ public interface UserInfoMapper {
      * @param phoneNumber 手机号码
      * @return 用户对象信息
      */
-    UserInfo selectUserByPhoneNumber(String phoneNumber);
+    UserInfo selectUserInfoByPhoneNumber(String phoneNumber);
 
     /**
      * 通过邮箱查询用户
@@ -51,7 +51,7 @@ public interface UserInfoMapper {
      * @param email 邮箱
      * @return 用户对象信息
      */
-    UserInfo selectUserByEmail(String email);
+    UserInfo selectUserInfoByEmail(String email);
 
     /**
      * 新增用户

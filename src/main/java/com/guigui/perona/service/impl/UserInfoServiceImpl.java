@@ -4,8 +4,10 @@ import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.exception.GlobalException;
 import com.guigui.perona.common.utils.*;
 import com.guigui.perona.common.utils.text.Convert;
+import com.guigui.perona.entity.RoleInfo;
 import com.guigui.perona.entity.UserInfo;
 import com.guigui.perona.entity.UserRole;
+import com.guigui.perona.mapper.RoleInfoMapper;
 import com.guigui.perona.mapper.UserInfoMapper;
 import com.guigui.perona.service.IUserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Autowired
     private PasswordHelper passwordHelper;
 
+    @Autowired
+    private RoleInfoMapper roleInfoMapper;
+
     @Override
     public UserInfo findByName(String username) {
         return userInfoMapper.selectUserInfoByUserName(username);
@@ -39,12 +44,12 @@ public class UserInfoServiceImpl implements IUserInfoService {
 
     @Override
     public UserInfo findByMobileNo(String mobileNo) {
-        return userInfoMapper.selectUserByPhoneNumber(mobileNo);
+        return userInfoMapper.selectUserInfoByPhoneNumber(mobileNo);
     }
 
     @Override
     public UserInfo findByEmail(String email) {
-        return userInfoMapper.selectUserByEmail(email);
+        return userInfoMapper.selectUserInfoByEmail(email);
     }
 
     @Override
@@ -190,5 +195,48 @@ public class UserInfoServiceImpl implements IUserInfoService {
     @Override
     public int changeStatus(UserInfo userInfo) {
         return userInfoMapper.updateUserInfo(userInfo);
+    }
+
+    @Override
+    public String selectUserRoleGroup(Long userId) {
+        List<RoleInfo> roleList = roleInfoMapper.selectRolesByUserId(userId);
+        StringBuilder idsStr = new StringBuilder();
+        for (RoleInfo roleInfo : roleList) {
+            idsStr.append(roleInfo.getRoleName()).append(",");
+        }
+        if (StringUtils.isNotEmpty(idsStr.toString())) {
+            return idsStr.substring(0, idsStr.length() - 1);
+        }
+        return idsStr.toString();
+    }
+
+    @Override
+    public String checkLoginNameUnique(UserInfo userInfo) {
+        long userId = userInfo.getId() == null ? -1L : userInfo.getId();
+        UserInfo info = findByName(userInfo.getUsername());
+        if (info != null && info.getId() != userId) {
+            return UserConstants.USER_NOT_UNIQUE;
+        }
+        return UserConstants.USER_UNIQUE;
+    }
+
+    @Override
+    public String checkPhoneUnique(UserInfo userInfo) {
+        long userId = userInfo.getId() == null ? -1L : userInfo.getId();
+        UserInfo info = findByMobileNo(userInfo.getPhoneNumber());
+        if (info != null && info.getId() != userId) {
+            return UserConstants.USER_NOT_UNIQUE;
+        }
+        return UserConstants.USER_UNIQUE;
+    }
+
+    @Override
+    public String checkEmailUnique(UserInfo userInfo) {
+        long userId = userInfo.getId() == null ? -1L : userInfo.getId();
+        UserInfo info = findByEmail(userInfo.getEmail());
+        if (info != null && info.getId() != userId) {
+            return UserConstants.USER_NOT_UNIQUE;
+        }
+        return UserConstants.USER_UNIQUE;
     }
 }

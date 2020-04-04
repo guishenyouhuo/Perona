@@ -2,7 +2,9 @@ package com.guigui.perona.controller;
 
 import java.util.List;
 
+import com.guigui.perona.common.aspect.annotation.OperaLog;
 import com.guigui.perona.common.constants.UserConstants;
+import com.guigui.perona.common.enums.BusinessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -58,6 +60,7 @@ public class ParamConfigController extends BaseController {
     /**
      * 新增保存参数配置
      */
+    @OperaLog(businessName = "系统参数", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(ParamConfig paramConfig) {
@@ -80,6 +83,7 @@ public class ParamConfigController extends BaseController {
     /**
      * 修改保存参数配置
      */
+    @OperaLog(businessName = "系统参数", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(ParamConfig paramConfig) {
@@ -92,6 +96,7 @@ public class ParamConfigController extends BaseController {
     /**
      * 删除参数配置
      */
+    @OperaLog(businessName = "系统参数", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) {

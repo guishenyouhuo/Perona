@@ -16,7 +16,7 @@ spring:
   # 资源信息
   messages:
     # 国际化资源文件路径
-    basename: static/i18n/messages
+    basename: static/manage/i18n/messages
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
@@ -47,15 +47,6 @@ server:
     # Tomcat启动初始化的线程数，默认值25
     min-spare-threads: 30
 
-# mybatis相关配置
-mybatis-plus:
-  configuration:
-    jdbc-type-for-null: null
-  mapper-locations: classpath:mapper/perona/*.xml
-  global-config:
-    banner: false
-  type-aliases-package: com.guigui.perona.entity.**
-
 # PageHelper分页插件
 pagehelper:
   helperDialect: mysql
@@ -74,11 +65,10 @@ perona:
     packageName: com.guigui.perona
   # shiro相关配置
   shiro:
-    logout_url: /logout
+    logout_url: /manage/logout
     login_url: /manage/login
     captcha_enabled: true
     hash_times: 23
-    cookie_timeout: 86400
     anon_url: /site/**,/error/**,/,/article/**,/category/**,/archives/**,/links/**,/about/**,/page/**,
       /admin/js/**,/admin/layui/**,/admin/page/css/**,/admin/page/lay/**,/admin/lib/**,
       /manage/img/**,/manage/css/**,/manage/fonts/**,/manage/ajax/**,/manage/js/**,/manage/perona/**,
@@ -86,8 +76,17 @@ perona:
       /api/comment/**
     hash_algorithm: MD5
     captcha_type: math
-    session_timeout: 3600
+    # 单位分钟
+    session_timeout: 60
     success_url: /manage
+    # 设置Cookie的域名 默认空，即当前访问的域名
+    cookie_domain:
+    # 设置cookie的有效访问路径
+    cookie_path: /
+    # 设置HttpOnly属性
+    cookie_httpOnly: true
+    # 设置Cookie的过期时间，天为单位
+    cookie_maxAge: 30
   # 项目相关配置
   project:
     # 名称

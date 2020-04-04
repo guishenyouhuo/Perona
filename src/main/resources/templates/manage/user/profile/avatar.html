@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-	<th:block th:include="include :: header('修改用户头像')" />
-	<th:block th:include="include :: cropbox-css" />
+	<th:block th:include="manage/include :: header('修改用户头像')" />
+	<th:block th:include="manage/include :: cropbox-css" />
 </head>
 <body class="white-bg">
     <div class="container"> 
@@ -21,8 +21,8 @@
 	   </div> 
 	   <div class="cropped"></div> 
     </div>
-<th:block th:include="include :: footer" />
-<th:block th:include="include :: cropbox-js" />
+<th:block th:include="manage/include :: footer" />
+<th:block th:include="manage/include :: cropbox-js" />
 <script type="text/javascript">
 var cropper;
 $(window).load(function() {

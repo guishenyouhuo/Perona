@@ -41,10 +41,10 @@ public class IndexController extends BaseController {
         return "manage/index" ;
     }
 
-    // 切换主题 TODO
+    // 切换主题
     @GetMapping("/switchSkin")
     public String switchSkin(ModelMap mMap) {
-        return "skin" ;
+        return "manage/skin" ;
     }
 
     // 系统介绍

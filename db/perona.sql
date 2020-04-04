@@ -152,20 +152,27 @@ ALTER TABLE login_log
 -- Table structure for operate_log
 -- ----------------------------
 DROP TABLE IF EXISTS `operate_log`;
-CREATE TABLE `operate_log`
+create table `operate_log`
 (
-    `id`          bigint(20) NOT NULL AUTO_INCREMENT COMMENT '编号',
-    `username`    varchar(20)  DEFAULT NULL COMMENT '操作用户',
-    `operation`   varchar(20)  DEFAULT NULL COMMENT '操作描述',
-    `time`        bigint(20)   DEFAULT NULL COMMENT '耗时(毫秒)',
-    `method`      varchar(100) DEFAULT NULL COMMENT '操作方法',
-    `params`      varchar(255) DEFAULT NULL COMMENT '操作参数',
-    `ip`          varchar(20)  DEFAULT NULL COMMENT 'IP地址',
-    `create_time` datetime     DEFAULT NULL COMMENT '操作时间',
-    `location`    varchar(20)  DEFAULT NULL COMMENT '操作地点',
-    PRIMARY KEY (`id`)
+    id            bigint(20) not null auto_increment comment '编号',
+    biz_name      varchar(32)   default '' comment '业务名称',
+    biz_type      int(2)        default 0 comment '业务类型（0其它 1新增 2修改 3删除）',
+    method        varchar(64)   default '' comment '方法名称',
+    req_method    varchar(16)   default '' comment '请求方式',
+    operate_type  int(1)        default 0 comment '操作类别（0其它 1后台用户 2手机端用户）',
+    operator      varchar(32)   default '' comment '操作人员',
+    dept_name     varchar(32)   default '' comment '部门名称',
+    operate_url   varchar(128)  default '' comment '请求url',
+    ip_addr       varchar(16)   default '' comment '主机地址',
+    operate_loc   varchar(128)  default '' comment '操作地点',
+    operate_param varchar(512)  default '' comment '请求参数',
+    json_result   varchar(512)  default '' comment '返回参数',
+    status        int(1)        default 0 comment '操作状态（0正常 1异常）',
+    error_msg     varchar(512) default '' comment '错误消息',
+    operate_time  datetime comment '操作时间',
+    primary key (`id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8 COMMENT ='系统日志表';
+  DEFAULT CHARSET = utf8 comment = '操作日志记录';
 
 -- ----------------------------
 -- Table structure for user_info

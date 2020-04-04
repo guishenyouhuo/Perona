@@ -79,12 +79,17 @@ public class PasswordHelper {
             throw new GlobalException("密码错误次数超过：" + maxRetryCount + "次!");
         }
 
-        if (StringUtils.equals(userInfo.getPassword(), encryptPassword(password, userInfo.getSalt()))) {
+        if (!matchPwd(userInfo, password)) {
             AsyncManager.async().execute(AsyncTaskFactory.recordLoginLog(userName, CommonConstants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
             loginRecordCache.put(userName, retryCount);
             throw new GlobalException("密码不匹配！");
         }
         clearLoginRecordCache(userName);
+    }
+
+    // 密码匹配
+    public boolean matchPwd(UserInfo userInfo, String password) {
+        return StringUtils.equals(userInfo.getPassword(), encryptPassword(password, userInfo.getSalt()));
     }
 
     public void clearLoginRecordCache(String username) {

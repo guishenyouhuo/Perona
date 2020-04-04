@@ -48,6 +48,7 @@ public interface IUserInfoService {
 
     /**
      * 更新用户记录
+     *
      * @param userInfo 用户
      * @return 结果
      */
@@ -146,5 +147,37 @@ public interface IUserInfoService {
      * @return 结果
      */
     int changeStatus(UserInfo userInfo);
+
+    /**
+     * 根据用户ID查询用户所属角色组
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    String selectUserRoleGroup(Long userId);
+
+    /**
+     * 校验用户名称是否唯一
+     *
+     * @param userInfo 用户信息
+     * @return 结果
+     */
+    String checkLoginNameUnique(UserInfo userInfo);
+
+    /**
+     * 校验手机号码是否唯一
+     *
+     * @param userInfo 用户信息
+     * @return 结果
+     */
+    String checkPhoneUnique(UserInfo userInfo);
+
+    /**
+     * 校验email是否唯一
+     *
+     * @param userInfo 用户信息
+     * @return 结果
+     */
+    String checkEmailUnique(UserInfo userInfo);
 
 }
