@@ -1,5 +1,6 @@
 package com.guigui.perona.entity;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 友链对象 friend_link
@@ -34,6 +36,11 @@ public class FriendLink implements Serializable {
      * 连接URL
      */
     private String url;
+
+    /**
+     * 请求参数
+     */
+    private Map<String, Object> params = Maps.newHashMap();
 
     @Override
     public String toString() {

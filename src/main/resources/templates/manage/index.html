@@ -76,8 +76,8 @@
 						</li>
 					</ul>
                 </li>
-                <li th:if="${demoEnabled}">
-                    <a href="#"><i class="fa fa-desktop"></i><span class="nav-label">实例演示</span><span class="fa arrow"></span></a>
+                <li th:if="${demoEnabled}" th:style="'display:' + ${@config.getKey('menu.demo.visible') == 'true' ? 'block' : 'none'}">
+                    <a href="#"><i class="fa fa-desktop"></i><span class="nav-label"> 实例演示</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
                         <li> <a>表单<span class="fa arrow"></span></a>
                             <ul class="nav nav-third-level">

@@ -1,12 +1,10 @@
 package com.guigui.perona.config;
 
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -30,17 +28,11 @@ public class MybatisConfig {
 
     private static final String MYBATIS_CONFIG_LOCATION = "classpath:mapper/mybatis-config.xml";
 
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource.druid")
-    @Bean(name = "dataSource")
-    public DataSource dataSourceConfig() {
-        return DruidDataSourceBuilder.create().build();
-    }
 
     @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactory sqlSessionFactory() throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dynamicDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dataSourceConfig());
+        sqlSessionFactoryBean.setDataSource(dataSource);
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         // 设置扫描 mybatis-config.xml
@@ -62,8 +54,8 @@ public class MybatisConfig {
 
     @Primary
     @Bean(name = "transactionManager")
-    public DataSourceTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(dataSourceConfig());
+    public DataSourceTransactionManager transactionManager(@Qualifier("dynamicDataSource")DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
     }
 
 }

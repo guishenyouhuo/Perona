@@ -17,7 +17,7 @@
     <div th:include="manage/include :: footer"></div>
     <th:block th:include="manage/include :: bootstrap-table-reorder-js" />
     <script th:inline="javascript">
-        var prefix = ctx + "demo/table";
+        var prefix = ctx + "manage/demo/table";
         var datas = [[${@dict.getType('sys_normal_disable')}]];
 
         $(function() {

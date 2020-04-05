@@ -1,12 +1,14 @@
 package com.guigui.perona.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -101,6 +103,11 @@ public class Article implements Serializable {
      * 分类名称
      */
     private String categoryName;
+
+    /**
+     * 请求参数
+     */
+    private Map<String, Object> params = Maps.newHashMap();
 
     @Override
     public String toString() {

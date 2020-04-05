@@ -3,6 +3,7 @@ package com.guigui.perona.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.guigui.perona.common.aspect.annotation.DataScope;
 import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.exception.GlobalException;
 import com.guigui.perona.common.utils.DateUtils;
@@ -53,6 +54,7 @@ public class DeptInfoServiceImpl implements IDeptInfoService {
      * @return 部门
      */
     @Override
+    @DataScope(deptAlias = "d")
     public List<DeptInfo> selectDeptInfoList(DeptInfo deptInfo) {
         return deptInfoMapper.selectDeptInfoList(deptInfo);
     }
@@ -148,6 +150,7 @@ public class DeptInfoServiceImpl implements IDeptInfoService {
     }
 
     @Override
+    @DataScope(deptAlias = "d")
     public List<Ztree> selectDeptInfoTree(DeptInfo deptInfo) {
         List<DeptInfo> deptList = deptInfoMapper.selectDeptInfoList(deptInfo);
         return initZtree(deptList);

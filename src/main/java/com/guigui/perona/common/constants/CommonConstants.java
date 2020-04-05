@@ -88,4 +88,9 @@ public final class CommonConstants {
      */
     public static final String LOGIN_FAIL = "Error";
 
+    /**
+     * "是" 通用标识常量
+     */
+    public static final String TRUE_FLAG = "1";
+
 }

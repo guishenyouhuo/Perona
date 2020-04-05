@@ -1,5 +1,6 @@
 package com.guigui.perona.entity;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 标签对象 art_tag
@@ -34,6 +36,11 @@ public class ArtTag implements Serializable {
      * 文章id
      */
     private Long articleId;
+
+    /**
+     * 请求参数
+     */
+    private Map<String, Object> params = Maps.newHashMap();
 
     @Override
     public String toString() {

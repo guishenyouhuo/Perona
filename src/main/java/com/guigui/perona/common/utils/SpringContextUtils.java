@@ -3,43 +3,39 @@ package com.guigui.perona.common.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * @Description: spring context获取工具
- * @Author: guigui
- * @Date: 2019-12-11 15:40
+ * spring context获取工具
+ *
+ * @author guigui
  */
 @Component
-public class SpringContextUtils implements ApplicationContextAware {
+public class SpringContextUtils implements BeanFactoryPostProcessor {
 
     private static Logger logger = LoggerFactory.getLogger(SpringContextUtils.class);
 
-    private static ApplicationContext context = null;
+    private static ConfigurableListableBeanFactory beanFactory = null;
 
     @SuppressWarnings("unchecked")
     public static <T> T getBean(String beanId) throws BeansException {
-        return (T) context.getBean(beanId);
+        return (T) beanFactory.getBean(beanId);
     }
 
     public static <T> T getBean(Class<T> clazz) throws BeansException {
-        return context.getBean(clazz);
+        return beanFactory.getBean(clazz);
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         logger.info("初始化 SpringContext");
-        SpringContextUtils.context = applicationContext;
+        SpringContextUtils.beanFactory = beanFactory;
     }
 
-    public static void setContext(ApplicationContext ctx) {
-        SpringContextUtils.context = ctx;
-    }
-
-    public static ApplicationContext getContext() {
-        return context;
+    public static ConfigurableListableBeanFactory getContext() {
+        return SpringContextUtils.beanFactory;
     }
 
 }

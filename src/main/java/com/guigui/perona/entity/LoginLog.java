@@ -1,6 +1,7 @@
 package com.guigui.perona.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -64,8 +65,10 @@ public class LoginLog implements Serializable {
      */
     private String msg;
 
-    /** 请求参数 */
-    private Map<String, Object> params;
+    /**
+     * 请求参数
+     */
+    private Map<String, Object> params = Maps.newHashMap();
 
     @Override
     public String toString() {

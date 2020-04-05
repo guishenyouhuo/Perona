@@ -1,5 +1,6 @@
 package com.guigui.perona.service.impl;
 
+import com.guigui.perona.common.aspect.annotation.DataScope;
 import com.guigui.perona.common.constants.UserConstants;
 import com.guigui.perona.common.exception.GlobalException;
 import com.guigui.perona.common.utils.*;
@@ -86,6 +87,7 @@ public class UserInfoServiceImpl implements IUserInfoService {
     }
 
     @Override
+    @DataScope(deptAlias = "d", userAlias = "u")
     public List<UserInfo> selectUserInfoList(UserInfo userInfo) {
         return userInfoMapper.selectUserInfoList(userInfo);
     }

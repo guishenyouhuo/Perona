@@ -1,7 +1,7 @@
 package com.guigui.perona.entity.gencode;
 
+import com.guigui.perona.common.constants.CommonConstants;
 import com.guigui.perona.common.constants.GenConstants;
-import com.guigui.perona.common.constants.ManageConstants;
 import com.guigui.perona.common.utils.StringUtils;
 import com.guigui.perona.manage.web.domain.BaseEntity;
 import lombok.Data;
@@ -117,7 +117,7 @@ public class GenTableColumn extends BaseEntity {
     }
 
     public boolean isPk(String isPk) {
-        return isPk != null && StringUtils.equals(ManageConstants.TRUE_FLAG, isPk);
+        return isPk != null && StringUtils.equals(CommonConstants.TRUE_FLAG, isPk);
     }
 
     public boolean isIncrement() {
@@ -125,7 +125,7 @@ public class GenTableColumn extends BaseEntity {
     }
 
     public boolean isIncrement(String isIncrement) {
-        return isIncrement != null && StringUtils.equals(ManageConstants.TRUE_FLAG, isIncrement);
+        return isIncrement != null && StringUtils.equals(CommonConstants.TRUE_FLAG, isIncrement);
     }
 
     public boolean isRequired() {
@@ -133,7 +133,7 @@ public class GenTableColumn extends BaseEntity {
     }
 
     public boolean isRequired(String isRequired) {
-        return isRequired != null && StringUtils.equals(ManageConstants.TRUE_FLAG, isRequired);
+        return isRequired != null && StringUtils.equals(CommonConstants.TRUE_FLAG, isRequired);
     }
 
     public boolean isInsert() {
@@ -141,7 +141,7 @@ public class GenTableColumn extends BaseEntity {
     }
 
     public boolean isInsert(String isInsert) {
-        return isInsert != null && StringUtils.equals(ManageConstants.TRUE_FLAG, isInsert);
+        return isInsert != null && StringUtils.equals(CommonConstants.TRUE_FLAG, isInsert);
     }
 
     public boolean isEdit() {
@@ -149,7 +149,7 @@ public class GenTableColumn extends BaseEntity {
     }
 
     public boolean isEdit(String isEdit) {
-        return isEdit != null && StringUtils.equals(ManageConstants.TRUE_FLAG, isEdit);
+        return isEdit != null && StringUtils.equals(CommonConstants.TRUE_FLAG, isEdit);
     }
 
     public boolean isList() {
@@ -157,7 +157,7 @@ public class GenTableColumn extends BaseEntity {
     }
 
     public boolean isList(String isList) {
-        return isList != null && StringUtils.equals(ManageConstants.TRUE_FLAG, isList);
+        return isList != null && StringUtils.equals(CommonConstants.TRUE_FLAG, isList);
     }
 
     public boolean isQuery() {
@@ -165,7 +165,7 @@ public class GenTableColumn extends BaseEntity {
     }
 
     public boolean isQuery(String isQuery) {
-        return isQuery != null && StringUtils.equals(ManageConstants.TRUE_FLAG, isQuery);
+        return isQuery != null && StringUtils.equals(CommonConstants.TRUE_FLAG, isQuery);
     }
 
     public boolean isSuperColumn() {
