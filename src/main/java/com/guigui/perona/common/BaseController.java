@@ -50,6 +50,13 @@ public class BaseController {
         getSubject().login(token);
     }
 
+    /**
+     * 页面跳转
+     */
+    public String redirect(String url) {
+        return StringUtils.format("redirect:{}", url);
+    }
+
     public Map<String, Object> getData(PageInfo<?> page) {
         Map<String, Object> data = new HashMap<>();
         data.put("rows", page.getList());

@@ -61,14 +61,14 @@
         </foreach>
     </delete>
 
-    <select id="selectByArticleId" parameterType="Long" resultType="ArtTag">
+    <select id="selectByArticleId" parameterType="Long" resultMap="ArtTagResult">
         select
         t.id, t.name, ta.article_id as article_id
         from art_tag t, article_tag ta
         where t.id = ta.tag_id and ta.article_id = #{id}
     </select>
 
-    <select id="selectByArticleIds" parameterType="Long" resultType="ArtTag">
+    <select id="selectByArticleIds" parameterType="Long" resultMap="ArtTagResult">
         select
         t.id, t.name, ta.article_id as article_id
         from art_tag t, article_tag ta

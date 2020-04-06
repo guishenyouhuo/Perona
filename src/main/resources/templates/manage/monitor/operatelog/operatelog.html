@@ -18,7 +18,7 @@
 								<label>操作人员： </label><input type="text" name="operator"/>
 							</li>
 							<li class="select-selectpicker">
-								<label>操作类型： </label><select id="bizType" th:with="type=${@dict.getType('operate_type')}" class="selectpicker" data-none-selected-text="请选择" multiple>
+								<label>操作类型： </label><select id="businessTypes" th:with="type=${@dict.getType('operate_type')}" class="selectpicker" data-none-selected-text="请选择" multiple>
 									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
 								</select>
 							</li>
@@ -150,13 +150,13 @@
 		
 		function searchPre() {
 		    var data = {};
-		    data.bizType = $.common.join($('#bizType').selectpicker('val'));
+		    data.businessTypes = $.common.join($('#businessTypes').selectpicker('val'));
 		    $.table.search('operate-form', 'bootstrap-table', data);
 		}
 		
 		function resetPre() {
 			$.form.reset();
-			$("#bizType").selectpicker('refresh');
+			$("#businessTypes").selectpicker('refresh');
 		}
 	</script>
 </body>

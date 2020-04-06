@@ -106,6 +106,11 @@ public class OperateLog implements Serializable {
     private Date operateTime;
 
     /**
+     * 业务类型数组
+     */
+    private Integer[] businessTypes;
+
+    /**
      * 请求参数
      */
     private Map<String, Object> params = Maps.newHashMap();

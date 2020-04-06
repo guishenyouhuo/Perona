@@ -62,7 +62,7 @@
     </delete>
 
     <!-- 根据文章id查询其关联分类表中的数据 -->
-    <select id="selectCategoryByArticleId" parameterType="Long" resultType="Category">
+    <select id="selectCategoryByArticleId" parameterType="Long" resultMap="CategoryResult">
         select
             c.id, c.name, a.id as article_id
         from article a, category c, article_category ac
@@ -70,7 +70,7 @@
     </select>
 
     <!-- 根据文章id列表批量查询其关联分类表中的数据 -->
-    <select id="selectCategoryByArticleIds" parameterType="Long" resultType="Category">
+    <select id="selectCategoryByArticleIds" parameterType="Long" resultMap="CategoryResult">
         select
             c.id, c.name, a.id as article_id
         from article a, category c, article_category ac

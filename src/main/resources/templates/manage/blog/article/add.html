@@ -37,7 +37,6 @@
                         <label class="col-sm-3 control-label is-required">文章标签：</label>
                         <div class="col-sm-7">
                             <select id="tagIds" name="tagIds" class="form-control m-b select2-multiple" th:with="tags=${@articleEdit.getArtTags()}" multiple>
-                                <option value="">请选择</option>
                                 <option th:each="tag : ${tags}" th:text="${tag.name}" th:value="${tag.id}"></option>
                             </select>
                         </div>
@@ -106,6 +105,7 @@
 	
 	    $("#form-article-add").validate({
 	    	onkeyup: false,
+            ignore: "",
 	        rules: {
 	            title: {
 	                remote: {
@@ -122,6 +122,12 @@
 	                    }
 	                }
 	            },
+                category: {
+	                required: true
+                },
+                tagIds: {
+	                required: true
+                },
 	        },
 	        messages: {
 	            "title": {

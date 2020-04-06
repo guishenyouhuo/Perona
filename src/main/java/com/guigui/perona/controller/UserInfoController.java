@@ -9,6 +9,8 @@ import com.guigui.perona.common.enums.BusinessType;
 import com.guigui.perona.common.utils.ShiroUtils;
 import com.guigui.perona.entity.RoleInfo;
 import com.guigui.perona.service.IRoleInfoService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,7 @@ import com.guigui.perona.manage.web.page.TableDataInfo;
  * @author guigui
  * @date 2020-03-13
  */
+@Api("用户管理")
 @Controller
 @RequestMapping("/manage/user")
 public class UserInfoController extends BaseController {
@@ -49,6 +52,7 @@ public class UserInfoController extends BaseController {
     /**
      * 查询用户列表
      */
+    @ApiOperation("获取用户列表")
     @RequiresPermissions("manage:user:view")
     @PostMapping("/list")
     @ResponseBody
