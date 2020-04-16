@@ -25,9 +25,9 @@ import com.guigui.perona.manage.web.page.TableDataInfo;
  * @date 2020-03-31
  */
 @Controller
-@RequestMapping("/manage/loginLog")
+@RequestMapping("/manage/loginlog")
 public class LoginLogController extends BaseController {
-    private String prefix = "manage/monitor/loginLog";
+    private String prefix = "manage/monitor/loginlog";
 
     @Autowired
     private ILoginLogService loginLogService;
@@ -37,7 +37,7 @@ public class LoginLogController extends BaseController {
 
     @GetMapping()
     public String loginLog() {
-        return prefix + "/loginLog";
+        return prefix + "/loginlog";
     }
 
     /**
