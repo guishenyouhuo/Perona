@@ -20,7 +20,7 @@
         <mybatis-plus.version>3.2.0</mybatis-plus.version>
         <swagger.version>2.9.2</swagger.version>
         <jsoup.version>1.12.1</jsoup.version>
-        <shiro-spring-version>1.3.2</shiro-spring-version>
+        <shiro-spring-version>1.7.0</shiro-spring-version>
         <shiro-ehcache.version>1.4.0</shiro-ehcache.version>
         <ip2region.version>1.7.2</ip2region.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
